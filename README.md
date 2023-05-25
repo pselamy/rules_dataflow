@@ -34,4 +34,4 @@ Contributions are welcome! If you have any ideas, improvements, or bug fixes, pl
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL v3.0 License - see the [LICENSE](LICENSE) file for details.
