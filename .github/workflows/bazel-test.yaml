@@ -1,11 +1,12 @@
 name: Run Bazel Test
 
 on:
-  pull-request
-  push
-
-branches:
-  main
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
   test-dataflow-flex-py3-image-1:
