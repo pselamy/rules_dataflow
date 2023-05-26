@@ -2,6 +2,9 @@ workspace(name = "rules_dataflow")
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+##########################
+##### SKYLIB SUPPORT #####
+##########################
 git_repository(
     name = "bazel_skylib",
     remote = "https://github.com/bazelbuild/bazel-skylib",
@@ -13,7 +16,7 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 bazel_skylib_workspace()
 
 ##########################
-#### PYTHON SUPPORT ####
+##### PYTHON SUPPORT #####
 ##########################
 git_repository(
     name = "rules_python",
