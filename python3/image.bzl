@@ -9,11 +9,15 @@ def dataflow_flex_py3_image(
   main = "",
   deps = [],
   layers = [],
+  requires = [],
 ):
   main = main or "{}.py".format(name)
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
   py_wheel_name = "{}.wheel".format(name)
+  required_deps = [
+    requirement(r.split(":")[0].split("[")[0]) for r in requires
+  ]
   
   container_image(
     name = name,
@@ -32,4 +36,5 @@ def dataflow_flex_py3_image(
   py_wheel(
     name = py_wheel_name,
     version = wheel_version,
+    requires = requires,
   )
