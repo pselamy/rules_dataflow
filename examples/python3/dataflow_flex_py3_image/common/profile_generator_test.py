@@ -1,6 +1,6 @@
 import unittest
 
-from helpers import profile_generator
+from common import profile_generator
 
 
 class GenerateProfilesTestCase(unittest.TestCase):
