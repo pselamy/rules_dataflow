@@ -26,7 +26,11 @@ def dataflow_flex_py3_image(
   distribution = distribution or main
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
-  py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl"
+  py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl".format(
+    name = name,
+    version = app_version,
+    python_tag = python_tag,
+  )
   required_deps = [
     requirement(r.split("==")[0].split("[")[0]) 
     for r in requires
