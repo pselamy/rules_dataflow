@@ -22,7 +22,9 @@ def dataflow_flex_py3_image(
   container_image(
     name = name,
     base = ":{}".format(py3_image_name),
-    env = {},
+    env = {
+      "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name
+    },
   )
   
   py3_image(
