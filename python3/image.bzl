@@ -8,59 +8,91 @@ def dataflow_flex_py3_image(
   name,
   app_version,
   base,
-  srcs = [],
-  main = "",
-  distribution = "",
-  deps = [],
-  layers = [],
-  packages = [],
-  requires = [],
-  entrypoint = "/opt/google/dataflow/python_template_launcher",
-  python_tag = "py3",
+  srcs=[],
+  main="",
+  distribution="",
+  deps=[],
+  layers=[],
+  packages=[],
+  requires=[],
+  entrypoint="/opt/google/dataflow/python_template_launcher",
+  python_tag="py3",
   **kwargs,
 ):
+  """
+  Generates a Docker image for Dataflow Flex Templates in Python 3.
+
+  Args:
+    name (str): Name of the Docker image.
+    app_version (str): Application version.
+    base (str): Base image for the Docker image.
+    srcs (List[str], optional): Source files. Defaults to an empty list.
+    main (str, optional): Main source file. Defaults to an empty string.
+    distribution (str, optional): Distribution file. Defaults to an empty string.
+    deps (List[str], optional): Dependency files. Defaults to an empty list.
+    layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
+    packages (List[str], optional): Python packages. Defaults to an empty list.
+    requires (List[str], optional): Required packages. Defaults to an empty list.
+    entrypoint (str, optional): Docker container entrypoint. Defaults to "/opt/google/dataflow/python_template_launcher".
+    python_tag (str, optional): Python tag for the image. Defaults to "py3".
+    **kwargs: Additional arguments.
+
+  Returns:
+    None
+  """
+
+  # Set main source file if not provided
   main = main or "{}.py".format(name)
+
+  # Include main source file in srcs if it's not already present
   srcs = srcs if main in srcs else srcs + [main]
+
+  # Generate names for intermediate targets
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
-  distribution = distribution or main
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
+
+  # Generate the filename for the Python wheel
   py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl".format(
-    name = name,
-    version = app_version,
-    python_tag = python_tag,
+    name=name,
+    version=app_version,
+    python_tag=python_tag,
   )
+
+  # Create a list of required dependencies based on 'requires'
   required_deps = [
-    requirement(r.split("==")[0].split("[")[0]) 
+    requirement(r.split("==")[0].split("[")[0])
     for r in requires
   ]
+
+  # Add required_deps to layers if they are not already in layers or deps
   layers = layers + [
-    r 
-    for r in required_deps 
+    r
+    for r in required_deps
     if r not in layers and r not in deps
   ]
-  
+
   container_image(
-    name = name,
-    base = ":{}".format(py3_image_name),
-    entrypoint = entrypoint,
-    env = {
+    name=name,
+    base=":{}".format(py3_image_name),
+    entrypoint=entrypoint,
+    env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name,
       "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
-    files = [
+    files=[
       ":{}".format(py_wheel_name)
     ]
   )
-  
+
   py3_image(
-    name = py3_image_name,
-    srcs = srcs,
+    name=py3_image_name,
+    srcs=srcs,
     # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
-    base = base,
-    main = main,
-    deps = deps,
+    base=base,
+    main=main,
+    deps=deps,
     layers = layers,
     **kwargs,
   )
