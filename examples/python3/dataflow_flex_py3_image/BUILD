@@ -19,7 +19,8 @@ dataflow_flex_py3_image(
 
 py_test(
     name = "minimal_profile_pipeline_test",
+    srcs = ["minimal_profile_pipeline_test.py"],
     deps = [
-      ":minimal_profile_pipeline",  
+      ":minimal_profile_pipeline.base.binary",  
     ],
 )
