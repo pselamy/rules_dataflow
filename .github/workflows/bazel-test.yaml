@@ -20,4 +20,5 @@ jobs:
         key: bazel
     - run: |
         cd examples/python3/dataflow_flex_py3_image
-        bazel test //...    
+        bazel test //... \
+          --test_output=errors
