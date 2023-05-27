@@ -27,10 +27,18 @@ py_test(
 py_library(
     name = "profile_processor",
     srcs = ["profile_processor.py"],
+    deps = [
+        ":models",
+        ":profile_processor",
+    ],
     visibility = ["//:__pkg__"],
 )
 
 py_test(
     name = "profile_processor_test",
     srcs = ["profile_processor_test.py"],
+    deps = [
+        ":models",
+        ":profile_processor",
+    ],
 )
