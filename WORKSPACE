@@ -73,15 +73,3 @@ _py_image_repos()
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 
 container_deps()
-
-load(
-    "@io_bazel_rules_docker//container:container.bzl",
-    "container_pull",
-)
-
-container_pull(
-  name = "dataflow_python310_template_launcher_base",
-  registry = "gcr.io",
-  repository = "dataflow-templates-base/python310-template-launcher-base",
-  digest = "sha256:7538b271",
-)
