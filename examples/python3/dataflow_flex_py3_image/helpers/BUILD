@@ -1,3 +1,5 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
 py_library(
     name = "generate_profiles",
     srcs = ["generate_profiles.py"],
