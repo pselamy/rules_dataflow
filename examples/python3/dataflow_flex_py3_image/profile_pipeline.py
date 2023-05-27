@@ -9,7 +9,7 @@ def run() -> None:
     with beam.Pipeline() as pipeline:
         profiles = (
             pipeline
-            | beam.Create(profile_generator.generate_profiles())
+            | beam.Create(profile_generator.generate_profiles(10))
             | beam.Map(print)
         )
 
