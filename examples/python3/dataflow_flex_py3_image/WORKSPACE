@@ -98,3 +98,11 @@ container_pull(
   repository = "dataflow-templates-base/python310-template-launcher-base",
   digest = "sha256:7538b271",
 )
+
+##########################
+#### DATAFLOW SUPPORT ####
+##########################
+local_repository(
+    name = "rules_dataflow",
+    path = "../../../",
+)
