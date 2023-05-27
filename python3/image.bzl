@@ -8,6 +8,7 @@ def dataflow_flex_py3_image(
   name,
   app_version,
   base,
+  srcs = [],
   main = "",
   deps = [],
   layers = [],
