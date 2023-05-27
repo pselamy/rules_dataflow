@@ -8,8 +8,9 @@ compile_pip_requirements(
     requirements_txt = "requirements_lock.txt",
 )
 
+# Minimal Example
 dataflow_flex_py3_image(
-    name = "minimal_profile_pipeline",
+    name = "profile_pipeline",
     app_version = "0.0.1",
     base = "@dataflow_python310_template_launcher_base//image",
     layers = [
@@ -18,9 +19,9 @@ dataflow_flex_py3_image(
 )
 
 py_test(
-    name = "minimal_profile_pipeline_test",
-    srcs = ["minimal_profile_pipeline_test.py"],
+    name = "profile_pipeline_test",
+    srcs = ["profile_pipeline_test.py"],
     deps = [
-      ":minimal_profile_pipeline.base.binary",  
+      ":profile_pipeline.base.binary",  
     ],
 )
