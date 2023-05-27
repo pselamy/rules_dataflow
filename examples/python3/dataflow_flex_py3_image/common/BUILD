@@ -16,3 +16,15 @@ py_test(
         ":profile_generator",
     ],
 )
+
+py_library(
+    name = "profile_processor",
+    srcs = ["profile_processor.py"],
+    visibility = ["//:__pkg__"],
+)
+
+py_library(
+    name = "profile_processor_test",
+    srcs = ["profile_processor_test.py"],
+    visibility = ["//:__pkg__"],
+)
