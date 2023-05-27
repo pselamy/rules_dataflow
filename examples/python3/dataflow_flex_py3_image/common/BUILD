@@ -2,7 +2,7 @@ load("@pip_deps//:requirements.bzl", "requirement")
 
 py_library(
     name = "models",
-    srcs = "models.py",
+    srcs = ["models.py"],
 )
 
 py_library(
