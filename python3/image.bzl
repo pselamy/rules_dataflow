@@ -6,7 +6,7 @@ load("@rules_python//python:packaging.bzl", "py_wheel")
 
 def dataflow_flex_py3_image(
   name,
-  wheel_version,
+  app_version,
   base,
   main = "",
   deps = [],
@@ -70,7 +70,7 @@ def dataflow_flex_py3_image(
     name = py_wheel_name,
     # {name}-{version}-{python_tag}-none-any.whl
     distribution = name,
-    version = wheel_version,
+    version = app_version,
     requires = requires,
     deps = [
       ":{}".format(py_package_name),
