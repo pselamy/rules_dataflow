@@ -29,7 +29,6 @@ py_library(
     srcs = ["profile_processor.py"],
     deps = [
         ":models",
-        ":profile_processor",
     ],
     visibility = ["//:__pkg__"],
 )
