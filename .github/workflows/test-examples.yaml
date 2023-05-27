@@ -25,7 +25,7 @@ jobs:
     - name: Simulate Dataflow
       run: |
         cd examples/python3/dataflow_flex_py3_image && \
-          bazel run profile_pipeline &&  \
+          bazel run profile_pipeline && \
             docker run -it --entrypoint /bin/bash bazel:profile_pipeline -c '
             python -m pip install --upgrade pip && \
             pip install ${FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES} && \
