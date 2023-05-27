@@ -10,6 +10,7 @@ def dataflow_flex_py3_image(
   main = "",
   deps = [],
   layers = [],
+  packages = [],
   requires = [],
   entrypoint = "/opt/google/dataflow/python_template_launcher",
   python_tag = "py3",
@@ -19,6 +20,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
+  py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
   py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl"
   required_deps = [
@@ -46,15 +48,30 @@ def dataflow_flex_py3_image(
   
   py3_image(
     name = py3_image_name,
+    srcs = srcs,
+    # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
+    base = base,
     main = main,
     deps = deps,
     layers = layers,
-    # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
-    base = base,
+    **kwargs,
+  )
+
+  py_package(
+    name = py_package_name,
+    packages = packages,
+    deps = [
+      ":{}".format(py_binary_name),
+    ],
   )
   
   py_wheel(
     name = py_wheel_name,
+    # {name}-{version}-{python_tag}-none-any.whl
+    distribution = name,
     version = wheel_version,
     requires = requires,
+    deps = [
+      ":{}".format(py_package_name),
+    ],
   )
