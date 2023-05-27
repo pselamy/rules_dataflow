@@ -22,6 +22,7 @@ dataflow_flex_py3_image(
     ],
     layers = [
       "//common:profile_generator",  
+      "//common:profile_processor",  
     ],
 )
 
