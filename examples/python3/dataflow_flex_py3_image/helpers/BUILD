@@ -1,17 +1,18 @@
 load("@pip_deps//:requirements.bzl", "requirement")
 
 py_library(
-    name = "generate_profiles",
-    srcs = ["generate_profiles.py"],
+    name = "profile_generator",
+    srcs = ["profile_generator.py"],
     deps = [
         requirement("faker"),
     ],
+    visibility = ["//:__pkg__"],
 )
 
 py_test(
-    name = "generate_profiles_test",
-    srcs = ["generate_profiles_test.py"],
+    name = "profile_generator_test",
+    srcs = ["profile_generator_test.py"],
     deps = [
-        ":generate_profiles",
+        ":profile_generator",
     ],
 )
