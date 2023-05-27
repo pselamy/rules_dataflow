@@ -1,6 +1,7 @@
 import apache_beam as beam
 
-from helpers import profile_generator
+from common import profile_generator
+from common import profile_processor
 
 
 def run() -> None:
