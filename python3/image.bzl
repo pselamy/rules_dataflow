@@ -10,6 +10,7 @@ def dataflow_flex_py3_image(
   base,
   srcs = [],
   main = "",
+  distribution = "",
   deps = [],
   layers = [],
   packages = [],
@@ -22,6 +23,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
+  distribution = distribution or main
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
   py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl"
@@ -70,7 +72,7 @@ def dataflow_flex_py3_image(
   py_wheel(
     name = py_wheel_name,
     # {name}-{version}-{python_tag}-none-any.whl
-    distribution = name,
+    distribution = distribution,
     version = app_version,
     requires = requires,
     deps = [
