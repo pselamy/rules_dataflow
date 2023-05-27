@@ -28,7 +28,7 @@ def dataflow_flex_py3_image(
     base (str): Base image for the Docker image.
     srcs (List[str], optional): Source files. Defaults to a list contaiing main.
     main (str, optional): Main source file. Defaults to name + .py.
-    distribution (str, optional): Distribution file. Defaults to the value of main.
+    distribution (str, optional): Distribution file. Defaults to the value of name.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
     layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
     packages (List[str], optional): Python packages. Defaults to an empty list.
@@ -50,7 +50,7 @@ def dataflow_flex_py3_image(
   # Generate names for intermediate targets
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
-  distribution = distribution or main
+  distribution = distribution or name
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
 
