@@ -1,0 +1,34 @@
+name: Test Example Workspaces
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test-dataflow-flex-py3-image-minimal:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Mount bazel cache  # Optional
+      uses: actions/cache@v3
+      with:
+        path: "~/.cache/bazel"
+        key: bazel
+    - name: Run Unit Tests
+      run: |
+        cd examples/python3/dataflow_flex_py3_image
+        bazel test //... \
+          --test_output=errors
+    - name: Simulate Dataflow
+      run: |
+        cd examples/python3/dataflow_flex_py3_image && \
+          bazel run profile_pipeline && \
+            docker run --entrypoint /bin/bash bazel:profile_pipeline -c '
+            python -m pip install --upgrade pip && \
+            pip install ${FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES} && \
+            python ${FLEX_TEMPLATE_PYTHON_PY_FILE} \
+          '
