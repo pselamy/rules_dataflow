@@ -96,7 +96,7 @@ container_pull(
   name = "dataflow_python310_template_launcher_base",
   registry = "gcr.io",
   repository = "dataflow-templates-base/python310-template-launcher-base",
-  digest = "sha256:7538b271",
+  digest = "sha256:7538b271bba00486fbc61531d9d7896d0dbaef037f500ddc78dbe742aa54a6b2",
 )
 
 ##########################
