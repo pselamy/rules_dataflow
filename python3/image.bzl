@@ -26,9 +26,9 @@ def dataflow_flex_py3_image(
     name (str): Name of the Docker image.
     app_version (str): Application version.
     base (str): Base image for the Docker image.
-    srcs (List[str], optional): Source files. Defaults to an empty list.
-    main (str, optional): Main source file. Defaults to an empty string.
-    distribution (str, optional): Distribution file. Defaults to an empty string.
+    srcs (List[str], optional): Source files. Defaults to a list contaiing main.
+    main (str, optional): Main source file. Defaults to name + .py.
+    distribution (str, optional): Distribution file. Defaults to the value of main.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
     layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
     packages (List[str], optional): Python packages. Defaults to an empty list.
