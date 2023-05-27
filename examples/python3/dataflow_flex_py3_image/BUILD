@@ -14,7 +14,7 @@ dataflow_flex_py3_image(
     app_version = "0.0.1",
     base = "@dataflow_python310_template_launcher_base//image",
     layers = [
-      "//helpers:profile_generator",  
+      "//common:profile_generator",  
     ],
 )
 
