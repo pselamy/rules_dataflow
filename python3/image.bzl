@@ -34,7 +34,7 @@ def dataflow_flex_py3_image(
     packages (List[str], optional): Python packages. Defaults to an empty list.
     requires (List[str], optional): Required packages. Defaults to an empty list.
     entrypoint (str, optional): Docker container entrypoint. Defaults to "/opt/google/dataflow/python_template_launcher".
-    python_tag (str, optional): Python tag for the image. Defaults to "py3".
+    python_tag (str, optional): Python tag for the wheel. Defaults to "py3".
     **kwargs: Additional arguments.
 
   Returns:
@@ -50,6 +50,7 @@ def dataflow_flex_py3_image(
   # Generate names for intermediate targets
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
+  distribution = distribution or main
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
 
@@ -65,6 +66,10 @@ def dataflow_flex_py3_image(
     requirement(r.split("==")[0].split("[")[0])
     for r in requires
   ]
+  beam_requirement = requirement("apache-beam")
+  required_deps = required_deps if beam_requirement in required_deps else [
+    beam_requirement
+  ] + required_deps
 
   # Add required_deps to layers if they are not already in layers or deps
   layers = layers + [
