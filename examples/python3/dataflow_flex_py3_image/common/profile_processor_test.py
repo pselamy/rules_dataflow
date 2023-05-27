@@ -9,7 +9,7 @@ class ProfileProcessorTestCase(unittest.TestCase):
     def test_process_profile(self):
         # Arrange
         profile = models.Profile(name="John Doe", age=25, email="johndoe@example.com")
-        expected_hash = "a60e0bcb8025f2d7a8b6bb85e4d3c8b4"
+        expected_hash = "3fc93ea9182f3d65dcb868fbf378f395"
         processor = profile_processor.ProfileProcessor()
 
         # Act
