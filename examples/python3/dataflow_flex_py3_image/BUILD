@@ -10,7 +10,8 @@ compile_pip_requirements(
 
 dataflow_flex_py3_image(
     name = "minimal_profile_pipeline",
-    base = "",
+    app_version = "0.0.1",
+    base = "@dataflow_python310_template_launcher_base//image",
     layers = [
       "//helpers:profile_generator",  
     ],
