@@ -1,3 +1,4 @@
+load("@rules_dataflow//python3:image.bzl", "dataflow_flex_py3_image")
 load("@rules_python//python/pip_install:requirements.bzl", "compile_pip_requirements")
 
 compile_pip_requirements(
@@ -5,4 +6,12 @@ compile_pip_requirements(
     extra_args = ["--allow-unsafe"],
     requirements_in = "requirements.txt",
     requirements_txt = "requirements_lock.txt",
+)
+
+dataflow_flex_py3_image(
+    
+)
+
+py_test(
+
 )
