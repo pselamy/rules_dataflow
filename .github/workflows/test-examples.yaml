@@ -22,7 +22,7 @@ jobs:
         cd examples/python3/dataflow_flex_py3_image
         bazel test //... \
           --test_output=errors
-    - name: Install wheel
+    - name: Simulate Dataflow
       run: |
         cd examples/python3/dataflow_flex_py3_image && \
         bazel run profile_pipeline && \
