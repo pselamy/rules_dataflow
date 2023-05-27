@@ -10,6 +10,7 @@ def dataflow_flex_py3_image(
   deps = [],
   layers = [],
   requires = [],
+  entrypoint = "/opt/google/dataflow/python_template_launcher",
 ):
   main = main or "{}.py".format(name)
   py3_image_name = "{}.base".format(name)
@@ -23,8 +24,10 @@ def dataflow_flex_py3_image(
     name = name,
     base = ":{}".format(py3_image_name),
     env = {
-      "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name
+      "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name,
+      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format()
     },
+    entrypoint = entrypoint,
   )
   
   py3_image(
@@ -32,6 +35,7 @@ def dataflow_flex_py3_image(
     main = main,
     deps = deps,
     layers = layers,
+    # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
     base = base,
   )
   
