@@ -1,1 +1,2 @@
 Faker==18.9.0
+apache-beam[gcp]==2.47.0
