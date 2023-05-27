@@ -33,5 +33,4 @@ py_library(
 py_test(
     name = "profile_processor_test",
     srcs = ["profile_processor_test.py"],
-    visibility = ["//:__pkg__"],
 )
