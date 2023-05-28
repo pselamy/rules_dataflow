@@ -1,3 +1,4 @@
+load("@bazel_tools//tools/python:runfiles.bzl", "runfiles")
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
@@ -8,22 +9,10 @@ def dataflow_flex_py3_pipeline_options(
     deps=[],
     **kwargs,
 ):
-    """
-    Builds a Dataflow Flex Template and generates metadata.json.
-
-    Args:
-        name (str): Name of the target.
-        srcs (List[str]): List of source files.
-        main_class (str): Name of the main class that extends Apache Beam PipelineOptions.
-        deps (List[str]): List of dependencies for the py_library target.
-        **kwargs: Additional keyword arguments to pass to py_library.
-
-    Returns:
-        None
-    """
     library_name = "{}_library".format(name)
     metadata_script_name = "{}_metadata_script".format(name)
     metadata_name = "{}_metadata".format(name)
+
     beam_requirement = requirement("apache-beam")
     deps = deps if beam_requirement in deps else deps + [beam_requirement]
 
@@ -36,16 +25,18 @@ def dataflow_flex_py3_pipeline_options(
 
     native.genrule(
         name="generate_{}".format(metadata_script_name),
-        srcs=srcs,
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
 import sys
 import json
 import apache_beam
+from bazel_tools.tools.python.runfiles import runfiles
 
-src_file = "$(location {src_file})"
-main_class = '{main_class}'
+r = runfiles.Create()
+src_file = r.Rlocation("$(location :{})")
+
+main_class = '{}'
 
 with open(src_file) as f:
     script_code = f.read()
@@ -69,21 +60,21 @@ for name, value in options.__class__.__dict__.items():
         metadata.append(option)
 
 metadata_json = {{
-    'name': '{metadata_name}',
-    'description': 'Dataflow Flex Template for {metadata_name}',
+    'name': '{}',
+    'description': 'Dataflow Flex Template for {}',
     'parameters': metadata
 }}
 
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(src_file=srcs[0], main_class=main_class, metadata_name=name),
+""".format(library_name, main_class, metadata_name, metadata_name),
     )
 
     py_binary(
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
-        deps=deps,
+        deps=[":{}".format(library_name), beam_requirement],
     )
 
     native.genrule(
