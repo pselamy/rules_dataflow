@@ -38,12 +38,12 @@ def dataflow_flex_py3_pipeline_options(
         name="generate_{}".format(metadata_script_name),
         srcs=srcs,
         outs=["{}.py".format(metadata_script_name)],
-        cmd="""\
-cat > $@ << EOF
+        cmd=r"""
+cat > $@ << 'EOF'
 import sys
 import json
 
-src_file = '$(location {src_file})'
+src_file = '$(location $<)'
 main_class = '{main_class}'
 
 with open(src_file) as f:
@@ -76,7 +76,7 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(src_file=srcs[0], main_class=main_class, metadata_name=name),
+""".format(main_class=main_class, metadata_name=name),
     )
 
     py_binary(
@@ -87,6 +87,6 @@ EOF
     native.genrule(
         name="generate_{}".format(metadata_name),
         outs=["{}.json".format(metadata_name)],
-        cmd="$< --output $@",
+        cmd="$(location :{}) --output $@".format(metadata_script_name),
         tools=[":{}".format(metadata_script_name)],
     )
