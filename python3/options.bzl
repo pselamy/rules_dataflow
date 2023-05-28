@@ -1,4 +1,3 @@
-load("@bazel_tools//tools/python:runfiles.bzl", "runfiles")
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
@@ -30,8 +29,9 @@ def dataflow_flex_py3_pipeline_options(
 cat > $@ << 'EOF'
 import sys
 import json
+
 import apache_beam
-from bazel_tools.tools.python.runfiles import runfiles
+from rules_python.python.runfiles import runfiles
 
 r = runfiles.Create()
 src_file = r.Rlocation("$(location :{})")
