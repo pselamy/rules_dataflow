@@ -69,14 +69,15 @@ with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
 """.format(library_name, main_class, metadata_name, metadata_name),
+        tools=[":{}".format(library_name)],
     )
 
     py_binary(
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
         deps=[
-            ":{}".format(library_name), 
-            beam_requirement, 
+            ":{}".format(library_name),
+            beam_requirement,
             "@rules_python//python/runfiles"
         ],
     )
