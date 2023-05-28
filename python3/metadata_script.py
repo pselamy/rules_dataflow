@@ -1,6 +1,7 @@
 import sys
 import json
 import inspect
+
 from apache_beam.options import pipeline_options
 from absl import app
 from absl import flags
