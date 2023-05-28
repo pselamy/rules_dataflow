@@ -76,10 +76,10 @@ metadata_json = {{
     'parameters': metadata
 }}
 
-with open('$(@)', 'w') as f:
+with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(src_file=srcs[0], main_class=main_class, template_name=name),
+""".format(src_file="$(location {})".format(srcs[0]), main_class=main_class, template_name=name),
     )
 
     py_binary(
