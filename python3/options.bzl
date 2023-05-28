@@ -42,6 +42,7 @@ def dataflow_flex_py3_pipeline_options(
 cat > $@ << 'EOF'
 import sys
 import json
+import apache_beam
 
 src_file = '$(location $<)'
 main_class = '{main_class}'
@@ -87,6 +88,6 @@ EOF
     native.genrule(
         name="generate_{}".format(metadata_name),
         outs=["{}.json".format(metadata_name)],
-        cmd="$(location :{}) --output $@".format(metadata_script_name),
+        cmd="$(location :{}) --output $@ $(location :{})".format(metadata_script_name, metadata_script_name),
         tools=[":{}".format(metadata_script_name)],
     )
