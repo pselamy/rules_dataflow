@@ -1,3 +1,6 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
 def dataflow_flex_py3_pipeline_options(
     name,
     srcs,
@@ -74,4 +77,17 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(main_class=main_class
+""".format(main_class=main_class, metadata_name=name),
+    )
+
+    py_binary(
+        name=metadata_script_name,
+        srcs=["{}.py".format(metadata_script_name)],
+    )
+
+    native.genrule(
+        name="generate_{}".format(metadata_name),
+        outs=["{}.json".format(metadata_name)],
+        cmd="$(location :{}) --output $@ $(location :{})".format(metadata_script_name, metadata_script_name),
+        tools=[":{}".format(metadata_script_name)],
+    )
