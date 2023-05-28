@@ -21,7 +21,7 @@ def dataflow_flex_py3_pipeline_options(
     Returns:
         None
     """
-    library_name = "{}.library".format(name)
+    library_name = "{}_library".format(name)
     beam_requirement = requirement("apache-beam")
     deps = deps if beam_requirement in deps else deps + [beam_requirement]
 
@@ -33,7 +33,7 @@ def dataflow_flex_py3_pipeline_options(
     )
 
     native.genrule(
-        name="{}.flex_template".format(name),
+        name="{}_flex_template".format(name),
         srcs=[":{}".format(library_name)],
         outs=["metadata.json"],
         cmd='''
