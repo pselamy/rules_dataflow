@@ -1,3 +1,4 @@
+load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_library")
 
 def dataflow_flex_py3_pipeline_options(
@@ -24,7 +25,7 @@ def dataflow_flex_py3_pipeline_options(
         name=library_name,
         srcs=srcs,
         deps=[
-            "@apache_beam//python:apache_beam",
+            requirement("apache-beam"),
         ],
         **kwargs,
     )
