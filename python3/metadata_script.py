@@ -50,5 +50,6 @@ def main(argv):
     generate_metadata(FLAGS.src_file, FLAGS.output_file)
 
 
+
 if __name__ == "__main__":
     app.run(main)
