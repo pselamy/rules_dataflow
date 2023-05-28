@@ -1,6 +1,16 @@
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
+def get_workspace_name_impl(ctx):
+    workspace_name = ctx.workspace.name
+    return workspace_name
+
+get_workspace_name = rule(
+    implementation = get_workspace_name_impl,
+    attrs = {},
+    output_to_genfiles = True,
+)
+
 def dataflow_flex_py3_pipeline_options(
     name,
     srcs,
@@ -8,6 +18,7 @@ def dataflow_flex_py3_pipeline_options(
     deps=[],
     **kwargs,
 ):
+    workspace_name = get_workspace_name()
     library_name = "{}_library".format(name)
     metadata_script_name = "{}_metadata_script".format(name)
     metadata_name = "{}_metadata".format(name)
@@ -27,6 +38,7 @@ def dataflow_flex_py3_pipeline_options(
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
+import os
 import sys
 import json
 
@@ -34,7 +46,7 @@ import apache_beam
 from rules_python.python.runfiles import runfiles
 
 r = runfiles.Create()
-src_file = "$(location :{})"
+src_file = r.Rlocation(os.path.join({}, "$(location :{})".lstrip("./").lstrip("/")))
 
 main_class = '{}'
 
@@ -68,7 +80,7 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(library_name, main_class, metadata_name, metadata_name),
+""".format(workspace_name, library_name, main_class, metadata_name, metadata_name),
         tools=[":{}".format(library_name)],
     )
 
