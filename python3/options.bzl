@@ -96,7 +96,7 @@ def generate_metadata_json():
             json.dump(metadata, f, indent=4)
 
     except Exception as e:
-        logging.error()
+        logging.error("Unable to generate metadata file.")
 
 if __name__ == "__main__":
     generate_metadata_json()
