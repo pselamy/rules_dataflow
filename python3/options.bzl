@@ -55,23 +55,28 @@ def dataflow_flex_py3_pipeline_options(
     import importlib
     import json
     import sys
+    import logging
+
+    logging.basicConfig(level=logging.DEBUG)
 
     def generate_metadata_json():
         script_file = sys.argv[1]
         options_class_name = sys.argv[2]
 
         try:
-            # Import the pipeline script as a module
+            logging.debug('Importing module...')
             module_name = script_file.rstrip(".py").lstrip("./").lstrip("/")
             module = importlib.import_module(module_name)
             options_class = getattr(module, options_class_name)
+            logging.debug(f'Successfully imported module {module_name}.')
 
-            # Generate metadata JSON based on the options class
+            logging.debug('Generating metadata...')
             metadata = {{
                 "name": '{name}',
                 "description": 'Dataflow Flex Template for {description}',
                 "parameters": [],
             }}.format(name='{metadata_name}', description='{metadata_name}')
+            logging.debug(f'Successfully generated metadata for {metadata_name}.')
 
             # Retrieve the pipeline options
             options = options_class()
@@ -92,7 +97,7 @@ def dataflow_flex_py3_pipeline_options(
                 json.dump(metadata, f, indent=4)
 
         except Exception as e:
-            print(f"Error: {str(e)}")
+            logging.error(f"Error: {str(e)}", exc_info=True)
 
     if __name__ == "__main__":
         generate_metadata_json()
@@ -100,6 +105,7 @@ def dataflow_flex_py3_pipeline_options(
     """.format(metadata_name=metadata_name),
         tools=[":{}".format(library_name)],
     )
+
 
     # Define a py_binary target for the metadata generator script
     py_binary(
