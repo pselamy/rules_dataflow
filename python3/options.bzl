@@ -34,6 +34,9 @@ def dataflow_flex_py3_pipeline_options(
         out="{}_copy.py".format(name),  # Output a single file
     )
 
+    # Add a print statement here to verify if srcs value is correct
+    print("Generating {}: Source files: {}".format(metadata_script_name, ["{}_copy.py".format(name)]))
+
     native.genrule(
         name="generate_{}".format(metadata_script_name),
         srcs=["{}_copy.py".format(name)],  # Use the copied file directly
@@ -43,6 +46,9 @@ cat > $@ << 'EOF'
 import sys
 import json
 import apache_beam
+
+# Add a print statement here to debug the execpath
+print("Processing execpath: $(execpath $<)")
 
 src_file = '$(execpath $<)'
 main_class = '{main_class}'
@@ -83,7 +89,7 @@ EOF
     py_binary(
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
-        deps=[beam_requirement],
+        deps=deps,
     )
 
     native.genrule(
