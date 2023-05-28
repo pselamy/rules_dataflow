@@ -35,6 +35,7 @@ def dataflow_flex_py3_pipeline_options(
     py_binary(
         name=name + "_metadata_script",
         srcs=["metadata_script.py"],
+        main="metadata_script.py",
         deps=deps,
     )
 
