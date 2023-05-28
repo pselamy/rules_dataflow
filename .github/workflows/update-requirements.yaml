@@ -1,0 +1,20 @@
+name: Update Requirements Lock File
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+jobs:
+  go:
+    name: runner / suggester / requirements.update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cd examples/python3/dataflow_flex_py3_image
+          bazel run requirements.update
+      - uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: requirements.update
