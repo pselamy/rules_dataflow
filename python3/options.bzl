@@ -1,8 +1,44 @@
-native.genrule(
-    name="generate_{}".format(metadata_script_name),
-    srcs=srcs,
-    outs=["{}.py".format(metadata_script_name)],
-    cmd=r"""
+load("@pip_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+def dataflow_flex_py3_pipeline_options(
+    name,
+    srcs,
+    main_class,
+    deps=[],
+    **kwargs,
+):
+    """
+    Builds a Dataflow Flex Template and generates metadata.json.
+
+    Args:
+        name (str): Name of the target.
+        srcs (List[str]): List of source files.
+        main_class (str): Name of the main class that extends Apache Beam PipelineOptions.
+        deps (List[str]): List of dependencies for the py_library target.
+        **kwargs: Additional keyword arguments to pass to py_library.
+
+    Returns:
+        None
+    """
+    library_name = "{}_library".format(name)
+    metadata_script_name = "{}_metadata_script".format(name)
+    metadata_name = "{}_metadata".format(name)
+    beam_requirement = requirement("apache-beam")
+    deps = deps if beam_requirement in deps else deps + [beam_requirement]
+
+    py_library(
+        name=library_name,
+        srcs=srcs,
+        deps=deps,
+        **kwargs,
+    )
+
+    native.genrule(
+        name="generate_{}".format(metadata_script_name),
+        srcs=srcs,
+        outs=["{}.py".format(metadata_script_name)],
+        cmd=r"""
 cat > $@ << 'EOF'
 import sys
 import json
@@ -34,4 +70,24 @@ for name, value in options.__class__.__dict__.items():
 
 metadata_json = {{
     'name': '{metadata_name}',
-    'description': 'Dataflow Flex Template for {
+    'description': 'Dataflow Flex Template for {metadata_name}',
+    'parameters': metadata
+}}
+
+with open('$@', 'w') as f:
+    json.dump(metadata_json, f, indent=4)
+EOF
+""".format(main_class=main_class, metadata_name=name),
+    )
+
+    py_binary(
+        name=metadata_script_name,
+        srcs=["{}.py".format(metadata_script_name)],
+    )
+
+    native.genrule(
+        name="generate_{}".format(metadata_name),
+        outs=["{}.json".format(metadata_name)],
+        cmd="$(location :{}) --output $@ $(location :{})".format(metadata_script_name, metadata_script_name),
+        tools=[":{}".format(metadata_script_name)],
+    )
