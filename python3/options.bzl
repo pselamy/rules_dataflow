@@ -37,14 +37,48 @@ def dataflow_flex_py3_pipeline_options(
         srcs=srcs,
         outs=[name + "/metadata_script.py"],
         cmd="""
-            cat $(location {src_file}) > $@
-        """.format(src_file=srcs[0]),
+            echo 'import sys' >> $@
+            echo 'import json' >> $@
+            echo '' >> $@
+            echo "src_file = '$(location {src_file})'" >> $@
+            echo "main_class = '{main_class}'" >> $@
+            echo '' >> $@
+            echo 'with open(src_file) as f:' >> $@
+            echo '    script_code = f.read()' >> $@
+            echo '' >> $@
+            echo 'script_globals = globals().copy()' >> $@
+            echo 'script_locals = locals().copy()' >> $@
+            echo '' >> $@
+            echo 'exec(script_code, script_globals, script_locals)' >> $@
+            echo '' >> $@
+            echo 'options = script_locals.get(main_class)()' >> $@
+            echo 'metadata = []' >> $@
+            echo '' >> $@
+            echo "for name, value in options.__class__.__dict__.items():" >> $@
+            echo '    if isinstance(value, property) and issubclass(value.fget.__class__, apache_beam.options.value_provider.ValueProvider):' >> $@
+            echo '        option = {' >> $@
+            echo "            'name': name," >> $@
+            echo "            'label': name," >> $@
+            echo "            'helpText': value.__doc__," >> $@
+            echo "            'is_optional': True" >> $@
+            echo '        }' >> $@
+            echo '        metadata.append(option)' >> $@
+            echo '' >> $@
+            echo "metadata_json = {" >> $@
+            echo "    'name': '{template_name}'," >> $@
+            echo "    'description': 'Dataflow Flex Template for {template_name}'," >> $@
+            echo "    'parameters': metadata" >> $@
+            echo "}" >> $@
+            echo '' >> $@
+            echo "with open('$(@)', 'w') as f:" >> $@
+            echo "    json.dump(metadata_json, f, indent=4)" >> $@
+        """.format(src_file=srcs[0], main_class=main_class, template_name=name),
     )
 
     py_binary(
         name=name + "_metadata_script",
         srcs=[name + "/metadata_script.py"],
-        main="metadata_script.py",
+        main="metadata_script",
         deps=deps,
     )
 
@@ -53,43 +87,7 @@ def dataflow_flex_py3_pipeline_options(
         srcs=srcs,
         outs=[name + "/metadata.json"],
         cmd="""
-            python -c "
-            import sys
-            import json
-
-            src_file = '{src_file}'
-            main_class = '{main_class}'
-
-            with open(src_file) as f:
-                script_code = f.read()
-
-            script_globals = globals().copy()
-            script_locals = locals().copy()
-
-            exec(script_code, script_globals, script_locals)
-
-            options = script_locals.get(main_class)()
-            metadata = []
-
-            for name, value in options.__class__.__dict__.items():
-                if isinstance(value, property) and issubclass(value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
-                    option = {{
-                        'name': name,
-                        'label': name,
-                        'helpText': value.__doc__,
-                        'is_optional': True
-                    }}
-                    metadata.append(option)
-
-            metadata_json = {{
-                'name': '{template_name}',
-                'description': 'Dataflow Flex Template for {template_name}',
-                'parameters': metadata
-            }}
-
-            with open('$@', 'w') as f:
-                json.dump(metadata_json, f, indent=4)
-            "
-        """.format(src_file=name + "/metadata_script.py", main_class=main_class, template_name=name),
+            $(location {metadata_script}) > $@
+        """.format(metadata_script=name + "_metadata_script"),
         tools=[":" + name + "_metadata_script"],
     )
