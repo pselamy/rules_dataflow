@@ -37,27 +37,17 @@ def dataflow_flex_py3_pipeline_options(
         srcs=[":{}".format(library_name)],
         outs=["metadata.json"],
         cmd='''
-            echo '{metadata}' > $@
-        '''.format(
-            metadata='''{{
-                "metadata": {{
-                    "sdkInfo": {{
-                        "language": "PYTHON"
-                    }}
-                }},
-                "parameters": [
-                    $$(cat $$(location :{library}) | python3 -c "
-                        import sys, inspect
-                        options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
-                        options = [
-                            option[1] for option in options if issubclass(option[1], sys.modules['apache_beam'].PipelineOptions)
-                        ]
-                        print(','.join([
-                            '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}'
-                            for option in options
-                        ]))
-                    ")
+            cat $$(location :{library}) | python3 -c "
+                import sys, inspect
+                options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
+                options = [
+                    option[1] for option in options if issubclass(option[1], sys.modules['apache_beam'].PipelineOptions)
                 ]
-            }}'''.format(library=library_name.replace('.', '_'))
-        ),
+                print(','.join([
+                    '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}'
+                    for option in options
+                ]))
+            "
+        '''.format(library=library_name.replace('.', '_'))
     )
+
