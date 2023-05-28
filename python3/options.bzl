@@ -30,6 +30,8 @@ def dataflow_flex_py3_pipeline_options(
     library_name = "{}_library".format(name)
     metadata_script_name = "{}_metadata_script".format(name)
     metadata_name = "{}_metadata".format(name)
+    # Assumes that there's only a single source file which is a python file
+    module_name = srcs[0].replace("/", ".").rstrip(".py")
 
     # Add apache-beam requirement to deps if it's not already there
     beam_requirement = requirement("apache-beam")
@@ -62,7 +64,7 @@ def generate_metadata_json():
 
     try:
         logging.debug('Importing module...')
-        module_name = script_file.rstrip(".py").lstrip("./").lstrip("/")
+        module_name = {module_name}
         module = importlib.import_module(module_name)
         options_class = getattr(module, options_class_name)
         logging.debug(f'Successfully imported module {module_name}.')
@@ -99,7 +101,7 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, metadata_name=metadata_name),
+""".format(name=name, metadata_name=metadata_name, module_name=module_name),
         tools=[":{}".format(library_name)],
     )
 
@@ -110,7 +112,6 @@ EOF
         deps=[
             ":{}".format(library_name),
             beam_requirement,
-            "@rules_python//python/runfiles"
         ],
     )
 
