@@ -34,7 +34,7 @@ import apache_beam
 from rules_python.python.runfiles import runfiles
 
 r = runfiles.Create()
-src_file = r.Rlocation("$(location :{})")
+src_file = "$(location :{})"
 
 main_class = '{}'
 
