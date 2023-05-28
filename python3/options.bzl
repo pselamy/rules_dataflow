@@ -40,7 +40,9 @@ def dataflow_flex_py3_pipeline_options(
             python -c "
 import sys
 import json
-from {src} import {main_class}
+
+with open('$<', 'r') as f:
+    exec(f.read())
 
 options = {main_class}()
 metadata = []
@@ -64,5 +66,5 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 "
-            '''.format(src="$(location {})".format(srcs[0]), main_class=main_class, template_name=name),
+            '''.format(main_class=main_class, template_name=name),
     )
