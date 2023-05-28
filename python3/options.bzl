@@ -1,9 +1,6 @@
-"""
-Import necessary bazel build libraries and rules.
-"""
-
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 
 def dataflow_flex_py3_pipeline_options(
@@ -51,61 +48,60 @@ def dataflow_flex_py3_pipeline_options(
         name="generate_{}".format(metadata_script_name),
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
-    cat > $@ << 'EOF'
-    import importlib
-    import json
-    import sys
-    import logging
+cat > $@ << 'EOF'
+import importlib
+import json
+import sys
+import logging
 
-    logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
-    def generate_metadata_json():
-        script_file = sys.argv[1]
-        options_class_name = sys.argv[2]
+def generate_metadata_json():
+    script_file = sys.argv[1]
+    options_class_name = sys.argv[2]
 
-        try:
-            logging.debug('Importing module...')
-            module_name = script_file.rstrip(".py").lstrip("./").lstrip("/")
-            module = importlib.import_module(module_name)
-            options_class = getattr(module, options_class_name)
-            logging.debug(f'Successfully imported module {module_name}.')
+    try:
+        logging.debug('Importing module...')
+        module_name = script_file.rstrip(".py").lstrip("./").lstrip("/")
+        module = importlib.import_module(module_name)
+        options_class = getattr(module, options_class_name)
+        logging.debug(f'Successfully imported module {module_name}.')
 
-            logging.debug('Generating metadata...')
-            metadata = {{
-                "name": '{name}',
-                "description": 'Dataflow Flex Template for {description}',
-                "parameters": [],
-            }}.format(name='{metadata_name}', description='{metadata_name}')
-            logging.debug(f'Successfully generated metadata for {metadata_name}.')
+        logging.debug('Generating metadata...')
+        metadata = {{
+            "name": '{name}',
+            "description": 'Dataflow Flex Template for {metadata_name}',
+            "parameters": [],
+        }}
+        logging.debug(f'Successfully generated metadata for {metadata_name}.')
 
-            # Retrieve the pipeline options
-            options = options_class()
+        # Retrieve the pipeline options
+        options = options_class()
 
-            # Iterate over the options class attributes
-            for attr_name, attr_value in options.__class__.__dict__.items():
-                if isinstance(attr_value, property) and issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
-                    parameter = {{
-                        "name": attr_name,
-                        "label": attr_name.capitalize().replace("_", " "),
-                        "helpText": attr_value.__doc__,
-                        "isOptional": True,
-                    }}
-                    metadata["parameters"].append(parameter)
+        # Iterate over the options class attributes
+        for attr_name, attr_value in options.__class__.__dict__.items():
+            if isinstance(attr_value, property) and issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
+                parameter = {{
+                    "name": attr_name,
+                    "label": attr_name.capitalize().replace("_", " "),
+                    "helpText": attr_value.__doc__,
+                    "isOptional": True,
+                }}
+                metadata["parameters"].append(parameter)
 
-            # Write metadata to a json file
-            with open('$@', 'w') as f:
-                json.dump(metadata, f, indent=4)
+        # Write metadata to a json file
+        with open('$@', 'w') as f:
+            json.dump(metadata, f, indent=4)
 
-        except Exception as e:
-            logging.error(f"Error: {str(e)}", exc_info=True)
+    except Exception as e:
+        logging.error(f"Error: {str(e)}", exc_info=True)
 
-    if __name__ == "__main__":
-        generate_metadata_json()
-    EOF
-    """.format(metadata_name=metadata_name),
+if __name__ == "__main__":
+    generate_metadata_json()
+EOF
+""".format(name=name, metadata_name=metadata_name),
         tools=[":{}".format(library_name)],
     )
-
 
     # Define a py_binary target for the metadata generator script
     py_binary(
@@ -128,3 +124,11 @@ def dataflow_flex_py3_pipeline_options(
         ),
         tools=[":{}".format(metadata_script_name)],
     )
+
+
+dataflow_flex_py3_pipeline_options(
+    name = "my_pipeline",
+    srcs = ["my_pipeline.py"],
+    main_class = "MyPipelineOptions",
+    deps = [],
+)
