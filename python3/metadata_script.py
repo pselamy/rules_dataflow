@@ -45,6 +45,7 @@ def generate_metadata(src_file, output_file):
         json.dump(metadata_json, f, indent=4)
 
 
+
 def main(argv):
     generate_metadata(FLAGS.src_file, FLAGS.output_file)
 
