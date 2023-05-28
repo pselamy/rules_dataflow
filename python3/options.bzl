@@ -49,7 +49,7 @@ def dataflow_flex_py3_pipeline_options(
     native.genrule(
         name="generate_{}".format(metadata_script_name),
         outs=["{}.py".format(metadata_script_name)],
-        cmd=r"""
+                cmd=r"""
 cat > $@ << 'EOF'
 import importlib
 import json
@@ -63,7 +63,7 @@ def generate_metadata_json():
     options_class_name = sys.argv[2]
 
     logging.debug('Importing module...')
-    module_name = {module_name}
+    module_name = "{module_name}"
     module = importlib.import_module(module_name)
     options_class = getattr(module, options_class_name)
     logging.debug(f'Successfully imported module {module_name}.')
@@ -100,6 +100,7 @@ EOF
 """.format(name=name, metadata_name=metadata_name, module_name=module_name),
         tools=[":{}".format(library_name)],
     )
+
 
     # Define a py_binary target for the metadata generator script
     py_binary(
