@@ -1,3 +1,4 @@
+load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_dataflow//python3:image.bzl", "dataflow_flex_py3_image")
 load("@rules_python//python/pip_install:requirements.bzl", "compile_pip_requirements")
 
