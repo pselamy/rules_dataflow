@@ -22,18 +22,10 @@ def dataflow_flex_py3_pipeline_options(
     Returns:
         None
     """
-    library_name = "{}_library".format(name)
     metadata_script_name = "{}_metadata_script".format(name)
     metadata_name = "{}_metadata".format(name)
     beam_requirement = requirement("apache-beam")
     deps = deps if beam_requirement in deps else deps + [beam_requirement]
-
-    py_library(
-        name=library_name,
-        srcs=srcs,
-        deps=deps,
-        **kwargs,
-    )
 
     # Copy the main source file
     copy_file(
@@ -44,7 +36,7 @@ def dataflow_flex_py3_pipeline_options(
 
     native.genrule(
         name="generate_{}".format(metadata_script_name),
-        srcs=[":{}_src_copy".format(name)],  # Use the copied file
+        srcs=["{}_copy.py".format(name)],  # Use the copied file directly
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
@@ -91,11 +83,12 @@ EOF
     py_binary(
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
+        deps=[beam_requirement],
     )
 
     native.genrule(
         name="generate_{}".format(metadata_name),
         outs=["{}.json".format(metadata_name)],
-        cmd="$(location :{}) --output $@ $(location :{})".format(metadata_script_name, metadata_script_name),
+        cmd="$(location :{}) > $@".format(metadata_script_name),
         tools=[":{}".format(metadata_script_name)],
     )
