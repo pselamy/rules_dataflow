@@ -1,5 +1,5 @@
 load("@pip_deps//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_library")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 def dataflow_flex_py3_pipeline_options(
     name,
@@ -32,12 +32,18 @@ def dataflow_flex_py3_pipeline_options(
         **kwargs,
     )
 
+    py_binary(
+        name=name + "_metadata_script",
+        srcs=["metadata_script.py"],
+        deps=deps,
+    )
+
     native.genrule(
         name=name + "_metadata",
         srcs=srcs,
         outs=[name + "/metadata.json"],
         cmd="""
-            $(location //python3:metadata_script) --src_file=$(location {src_file}) --output_file=$(location {output_file})
-        """.format(src_file=srcs[0], output_file=name + "/metadata.json"),
-        tools=["//python3:metadata_script"],
+            $(location :{metadata_script}) --src_file=$(location {src_file}) --output_file=$(location {output_file})
+        """.format(metadata_script=name + "_metadata_script", src_file=srcs[0], output_file=name + "/metadata.json"),
+        tools=[":" + name + "_metadata_script"],
     )
