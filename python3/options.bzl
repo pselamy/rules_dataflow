@@ -36,9 +36,9 @@ def dataflow_flex_py3_pipeline_options(
         name="{}.flex_template".format(name),
         srcs=[":{}".format(library_name)],
         outs=["metadata.json"],
-        cmd="""
+        cmd='''
             echo '{metadata}' > $@
-        """.format(
+        '''.format(
             metadata='''{{
                 "metadata": {{
                     "sdkInfo": {{
