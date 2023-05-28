@@ -97,7 +97,7 @@ def dataflow_flex_py3_pipeline_options(
     if __name__ == "__main__":
         generate_metadata_json()
     EOF
-    """.format(metadata_name=metadata_name, metadata_name=metadata_name),
+    """.format(metadata_name=metadata_name),
         tools=[":{}".format(library_name)],
     )
 
