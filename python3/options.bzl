@@ -78,7 +78,7 @@ def dataflow_flex_py3_pipeline_options(
     py_binary(
         name=name + "_metadata_script",
         srcs=[name + "/metadata_script.py"],
-        main="metadata_script",
+        main="metadata_script.py",
         deps=deps,
     )
 
@@ -88,6 +88,6 @@ def dataflow_flex_py3_pipeline_options(
         outs=[name + "/metadata.json"],
         cmd="""
             $(location {metadata_script}) > $@
-        """.format(metadata_script=name + "_metadata_script"),
+        """.format(metadata_script=":" + name + "_metadata_script"),
         tools=[":" + name + "_metadata_script"],
     )
