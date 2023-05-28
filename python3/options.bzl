@@ -33,20 +33,36 @@ def dataflow_flex_py3_pipeline_options(
     )
 
     native.genrule(
-        name="{}_flex_template".format(name),
-        srcs=[":{}".format(library_name)],
-        outs=["metadata.json"],
-        cmd='''
-            cat $$(location :{library}) | python3 -c "
-                import sys, inspect
-                options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
-                options = [
-                    option[1] for option in options if issubclass(option[1], sys.modules['apache_beam'].PipelineOptions)
-                ]
-                print(','.join([
-                    '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}'
-                    for option in options
-                ]))
+        name = name + "_metadata",
+        srcs = srcs,
+        outs = [name + "/metadata.json"],
+        cmd = '''
+            python -c "
+            import sys
+            import json
+            from {location} import {main_class}
+
+            options = {main_class}()
+            metadata = []
+
+            for name, value in options.__class__.__dict__.items():
+                if isinstance(value, property) and issubclass(value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
+                    option = {{
+                        'name': name,
+                        'label': name,
+                        'helpText': value.__doc__,
+                        'is_optional': True
+                    }}
+                    metadata.append(option)
+
+            metadata_json = {{
+                'name': '{template_name}',
+                'description': 'Dataflow Flex Template for {template_name}',
+                'parameters': metadata
+            }}
+
+            with open('$@', 'w') as f:
+                json.dump(metadata_json, f, indent=4)
             "
-        '''.format(library=library_name)
+            '''.format(location = "$location/{}".format(srcs[0]), main_class = main_class, template_name = name),
     )
