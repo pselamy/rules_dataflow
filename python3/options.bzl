@@ -36,35 +36,8 @@ def dataflow_flex_py3_pipeline_options(
         name=name + "_metadata",
         srcs=srcs,
         outs=[name + "/metadata.json"],
-        cmd='''
-            python -c "
-import sys
-import json
-
-with open('$<', 'r') as f:
-    exec(f.read())
-
-options = {main_class}()
-metadata = []
-
-for name, value in options.__class__.__dict__.items():
-    if isinstance(value, property) and issubclass(value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
-        option = {{
-            'name': name,
-            'label': name,
-            'helpText': value.__doc__,
-            'is_optional': True
-        }}
-        metadata.append(option)
-
-metadata_json = {{
-    'name': '{template_name}',
-    'description': 'Dataflow Flex Template for {template_name}',
-    'parameters': metadata
-}}
-
-with open('$@', 'w') as f:
-    json.dump(metadata_json, f, indent=4)
-"
-            '''.format(main_class=main_class, template_name=name),
+        cmd="""
+            $(location //python3:metadata_script) --src_file=$(location {src_file}) --output_file=$(location {output_file})
+        """.format(src_file=srcs[0], output_file=name + "/metadata.json"),
+        tools=["//python3:metadata_script"],
     )
