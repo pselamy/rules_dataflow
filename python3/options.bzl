@@ -1,5 +1,6 @@
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_library")
+load("@bazel_tools//tools/build_defs/genrule.bzl", "genrule")
 
 def dataflow_flex_py3_pipeline_options(
     name,
@@ -32,30 +33,32 @@ def dataflow_flex_py3_pipeline_options(
         **kwargs,
     )
 
-    native.genrule(
+    genrule(
         name="{}.flex_template".format(name),
         srcs=[":{}".format(library_name)],
         outs=["metadata.json"],
         cmd="""
-            echo '{
+            echo '{metadata}' > $@
+        """.format(
+            metadata='''{
                 "metadata": {
                     "sdkInfo": {
                         "language": "PYTHON"
                     }
                 },
                 "parameters": [
-                    $$(cat $$(location :{library}) | python3 -c "
+                    $(cat $(location :{library}) | python3 -c "
                         import sys, inspect
                         options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
                         options = [
                             option[1] for option in options if issubclass(option[1], sys.modules['apache_beam'].PipelineOptions)
                         ]
                         print(','.join([
-                            '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}' \
+                            '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}'
                             for option in options
                         ]))
                     ")
                 ]
-            }' > $@
-        """.format(library=library_name),
+            }'''.format(library=library_name)
+        ),
     )
