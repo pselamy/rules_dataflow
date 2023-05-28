@@ -46,7 +46,7 @@ cat > $@ << EOF
 import sys
 import json
 
-src_file = '$(location {src_file})'
+src_file = '$(location {})'
 main_class = '{main_class}'
 
 with open(src_file) as f:
@@ -79,7 +79,7 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(src_file="$(location {})".format(srcs[0]), main_class=main_class, template_name=name),
+""".format(main_class=main_class, template_name=name),
     )
 
     py_binary(
@@ -92,6 +92,6 @@ EOF
         outs=["{}.json".format(metadata_name)],
         cmd="""\
 $({metadata_script_name}) --output $@
-""".format(metadata_script_name=":".join(["@", metadata_script_name])),
+""".format(metadata_script_name=metadata_script_name),
         tools=[":{}".format(metadata_script_name)],
     )
