@@ -33,3 +33,8 @@ jobs:
       - uses: reviewdog/action-suggester@v1
         with:
           tool_name: requirements.update
+permissions:
+  checks: write
+  contents: write
+  issues: write
+  pull-requests: write
