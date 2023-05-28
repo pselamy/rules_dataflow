@@ -43,8 +43,8 @@ cat > $@ << EOF
 import sys
 import json
 
-src_file = '$(location {})'
-main_class = '{}'
+src_file = '$(location {src_file})'
+main_class = '{main_class}'
 
 with open(src_file) as f:
     script_code = f.read()
@@ -68,15 +68,15 @@ for name, value in options.__class__.__dict__.items():
         metadata.append(option)
 
 metadata_json = {{
-    'name': '{}',
-    'description': 'Dataflow Flex Template for {}',
+    'name': '{metadata_name}',
+    'description': 'Dataflow Flex Template for {metadata_name}',
     'parameters': metadata
 }}
 
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(srcs[0], main_class, name),
+""".format(src_file=srcs[0], main_class=main_class, metadata_name=name),
     )
 
     py_binary(
@@ -87,8 +87,6 @@ EOF
     native.genrule(
         name="generate_{}".format(metadata_name),
         outs=["{}.json".format(metadata_name)],
-        cmd="""\
-$< --output $@
-""",
+        cmd="$< --output $@",
         tools=[":{}".format(metadata_script_name)],
     )
