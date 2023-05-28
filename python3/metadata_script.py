@@ -16,7 +16,11 @@ def generate_metadata(src_file, output_file):
     module_name = src_file.split(".")[0]
     module = __import__(module_name)
     classes = inspect.getmembers(module, inspect.isclass)
-    options = [option[1] for option in classes if issubclass(option[1], pipeline_options.PipelineOptions)]
+    options = [
+        option[1]
+        for option in classes
+        if issubclass(option[1], pipeline_options.PipelineOptions)
+    ]
 
     metadata = []
     for option in options:
