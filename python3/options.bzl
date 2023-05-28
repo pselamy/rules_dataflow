@@ -68,10 +68,10 @@ def dataflow_flex_py3_pipeline_options(
 
             # Generate metadata JSON based on the options class
             metadata = {{
-                "name": '{}',
-                "description": 'Dataflow Flex Template for {}',
+                "name": '{name}',
+                "description": 'Dataflow Flex Template for {description}',
                 "parameters": [],
-            }}.format(name, description)
+            }}.format(name='{metadata_name}', description='{metadata_name}')
 
             # Retrieve the pipeline options
             options = options_class()
@@ -97,11 +97,9 @@ def dataflow_flex_py3_pipeline_options(
     if __name__ == "__main__":
         generate_metadata_json()
     EOF
-    """.format(name=metadata_name, description=metadata_name),
+    """.format(metadata_name=metadata_name, metadata_name=metadata_name),
         tools=[":{}".format(library_name)],
     )
-
-
 
     # Define a py_binary target for the metadata generator script
     py_binary(
