@@ -124,11 +124,3 @@ EOF
         ),
         tools=[":{}".format(metadata_script_name)],
     )
-
-
-dataflow_flex_py3_pipeline_options(
-    name = "my_pipeline",
-    srcs = ["my_pipeline.py"],
-    main_class = "MyPipelineOptions",
-    deps = [],
-)
