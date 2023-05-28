@@ -58,6 +58,6 @@ def dataflow_flex_py3_pipeline_options(
                         ]))
                     ")
                 ]
-            }}'''.format(library=library_name)
+            }}'''.format(library=library_name.replace('.', '_'))
         ),
     )
