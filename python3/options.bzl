@@ -79,7 +79,7 @@ metadata_json = {{
 with open('$@', 'w') as f:
     json.dump(metadata_json, f, indent=4)
 EOF
-""".format(srcs[0], main_class, name),
+""".format(srcs[0], main_class, name, srcs[0]),
     )
 
     py_binary(
