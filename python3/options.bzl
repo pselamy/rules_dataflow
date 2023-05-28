@@ -116,9 +116,10 @@ EOF
     native.genrule(
         name="generate_{}".format(metadata_name),
         outs=["{}.json".format(metadata_name)],
-        cmd=r"$(location :{metadata_script_name}) --output $@ $(location :{metadata_script_name}) {metadata_name} {metadata_name}".format(
+        cmd=r"$(location :{metadata_script_name}) --output $@ $(location :{metadata_script_name}) {main_class}".format(
             metadata_script_name=metadata_script_name,
-            metadata_name=metadata_name,
+            main_class=main_class,
         ),
         tools=[":{}".format(metadata_script_name)],
     )
+
