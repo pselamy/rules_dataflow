@@ -26,9 +26,9 @@ def dataflow_flex_py3_pipeline_options(
     deps = deps if beam_requirement in deps else deps + [beam_requirement]
 
     py_library(
-        name=library_name,
-        srcs=srcs,
-        deps=deps,
+        name = library_name,
+        srcs = srcs,
+        deps = deps,
         **kwargs,
     )
 
@@ -61,8 +61,8 @@ def dataflow_flex_py3_pipeline_options(
                 'parameters': metadata
             }}
 
-            with open('$@', 'w') as f:
+            with open('$(location {out})', 'w') as f:
                 json.dump(metadata_json, f, indent=4)
             "
-            '''.format(location = "$location/{}".format(srcs[0]), main_class = main_class, template_name = name),
+            '''.format(location = ":{}".format(srcs[0]), main_class = main_class, template_name = name, out = name + "/metadata.json"),
     )
