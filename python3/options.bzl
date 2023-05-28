@@ -20,13 +20,15 @@ def dataflow_flex_py3_pipeline_options(
         None
     """
     library_name = "{}.library".format(name)
-
+    beam_requirement = requirement("apache-beam")
+    deps = deps if beam_requirement in deps else deps + [
+        beam_requirement
+    ]
+    
     py_library(
         name=library_name,
         srcs=srcs,
-        deps=[
-            requirement("apache-beam"),
-        ],
+        deps=deps,
         **kwargs,
     )
 
