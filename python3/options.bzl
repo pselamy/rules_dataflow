@@ -40,7 +40,7 @@ def dataflow_flex_py3_pipeline_options(
             echo 'import sys' >> $@
             echo 'import json' >> $@
             echo '' >> $@
-            echo "src_file = '$(location {src_file})'" >> $@
+            echo "src_file = '{src_file}'" >> $@
             echo "main_class = '{main_class}'" >> $@
             echo '' >> $@
             echo 'with open(src_file) as f:' >> $@
@@ -72,7 +72,11 @@ def dataflow_flex_py3_pipeline_options(
             echo '' >> $@
             echo "with open('$(@)', 'w') as f:" >> $@
             echo "    json.dump(metadata_json, f, indent=4)" >> $@
-        """.format(src_file=srcs[0], main_class=main_class, template_name=name),
+        """.format(
+            src_file=srcs[0],
+            main_class=main_class,
+            template_name=name,
+        ),
     )
 
     py_binary(
