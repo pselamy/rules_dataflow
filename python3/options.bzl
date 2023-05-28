@@ -45,8 +45,8 @@ def dataflow_flex_py3_pipeline_options(
             echo 'import sys' >> $@
             echo 'import json' >> $@
             echo '' >> $@
-            echo "src_file = '{}'" >> $@
-            echo "main_class = '{}'" >> $@
+            echo "src_file = '$(location {src_file})'" >> $@
+            echo "main_class = '{main_class}'" >> $@
             echo '' >> $@
             echo 'with open(src_file) as f:' >> $@
             echo '    script_code = f.read()' >> $@
@@ -70,30 +70,26 @@ def dataflow_flex_py3_pipeline_options(
             echo '        metadata.append(option)' >> $@
             echo '' >> $@
             echo "metadata_json = {" >> $@
-            echo "    'name': '{}',".format(name) >> $@
-            echo "    'description': 'Dataflow Flex Template for {}',".format(name) >> $@
+            echo "    'name': '{template_name}',".format(template_name=name) >> $@
+            echo "    'description': 'Dataflow Flex Template for {template_name}',".format(template_name=name) >> $@
             echo "    'parameters': metadata" >> $@
             echo "}" >> $@
             echo '' >> $@
             echo "with open('$(@)', 'w') as f:" >> $@
             echo "    json.dump(metadata_json, f, indent=4)" >> $@
-        """.format(
-            src_file=srcs[0],
-            main_class=main_class,
-        ),
+        """.format(src_file=srcs[0], main_class=main_class),
     )
 
     py_binary(
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
-        deps=deps,
     )
 
     native.genrule(
         name=metadata_genrule_name,
         outs=["{}.json".format(metadata_name)],
         cmd="""
-            ${{location("{}")}} --output $@
+            ${{location(":{}")}} --output $@
         """.format(metadata_script_name),
         tools=[":{}".format(metadata_script_name)],
     )
