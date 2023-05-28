@@ -39,14 +39,14 @@ def dataflow_flex_py3_pipeline_options(
         cmd="""
             echo '{metadata}' > $@
         """.format(
-            metadata='''{
-                "metadata": {
-                    "sdkInfo": {
+            metadata='''{{
+                "metadata": {{
+                    "sdkInfo": {{
                         "language": "PYTHON"
-                    }
-                },
+                    }}
+                }},
                 "parameters": [
-                    $(cat $(location :{library}) | python3 -c "
+                    $$(cat $$(location :{library}) | python3 -c "
                         import sys, inspect
                         options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
                         options = [
@@ -58,6 +58,6 @@ def dataflow_flex_py3_pipeline_options(
                         ]))
                     ")
                 ]
-            }'''.format(library=library_name)
+            }}'''.format(library=library_name)
         ),
     )
