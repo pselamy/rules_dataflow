@@ -11,13 +11,24 @@ on:
     paths:
       - 'requirements.txt'
 jobs:
-  update-requirements:
-    name: runner / suggester / requirements.update
+  update-requirements-dataflow-flex-py3-image:
+    name: suggester / requirements.update / dataflow-flex-py3-image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: |
           cd examples/python3/dataflow_flex_py3_image
+          bazel run requirements.update
+      - uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: requirements.update
+  update-requirements-dataflow-flex-py3-pipeline-options:
+    name: suggester / requirements.update / dataflow-flex-py3-pipeline-options
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cd examples/python3/dataflow_flex_py3_pipeline_options
           bazel run requirements.update
       - uses: reviewdog/action-suggester@v1
         with:
