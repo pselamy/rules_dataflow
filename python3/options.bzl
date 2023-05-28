@@ -22,6 +22,8 @@ def dataflow_flex_py3_pipeline_options(
         None
     """
     library_name = "{}_library".format(name)
+    metadata_script_name = "{}_metadata_script".format(name)
+    metadata_name = "{}_metadata".format(name)
     beam_requirement = requirement("apache-beam")
     deps = deps if beam_requirement in deps else deps + [beam_requirement]
 
@@ -32,16 +34,19 @@ def dataflow_flex_py3_pipeline_options(
         **kwargs,
     )
 
+    metadata_script_genrule_name = "generate_{}".format(metadata_script_name)
+    metadata_genrule_name = "generate_{}".format(metadata_name)
+
     native.genrule(
-        name=name + "_generate_metadata_script",
+        name=metadata_script_genrule_name,
         srcs=srcs,
-        outs=[name + "/metadata_script.py"],
+        outs=["{}.py".format(metadata_script_name)],
         cmd="""
             echo 'import sys' >> $@
             echo 'import json' >> $@
             echo '' >> $@
-            echo "src_file = '{src_file}'" >> $@
-            echo "main_class = '{main_class}'" >> $@
+            echo "src_file = '{}'" >> $@
+            echo "main_class = '{}'" >> $@
             echo '' >> $@
             echo 'with open(src_file) as f:' >> $@
             echo '    script_code = f.read()' >> $@
@@ -65,8 +70,8 @@ def dataflow_flex_py3_pipeline_options(
             echo '        metadata.append(option)' >> $@
             echo '' >> $@
             echo "metadata_json = {" >> $@
-            echo "    'name': '{template_name}'," >> $@
-            echo "    'description': 'Dataflow Flex Template for {template_name}'," >> $@
+            echo "    'name': '{}',".format(name) >> $@
+            echo "    'description': 'Dataflow Flex Template for {}',".format(name) >> $@
             echo "    'parameters': metadata" >> $@
             echo "}" >> $@
             echo '' >> $@
@@ -75,23 +80,20 @@ def dataflow_flex_py3_pipeline_options(
         """.format(
             src_file=srcs[0],
             main_class=main_class,
-            template_name=name,
         ),
     )
 
     py_binary(
-        name=name + "_metadata_script",
-        srcs=[name + "/metadata_script.py"],
-        main="metadata_script.py",
+        name=metadata_script_name,
+        srcs=["{}.py".format(metadata_script_name)],
         deps=deps,
     )
 
     native.genrule(
-        name=name + "_metadata",
-        srcs=srcs,
-        outs=[name + "/metadata.json"],
+        name=metadata_genrule_name,
+        outs=["{}.json".format(metadata_name)],
         cmd="""
-            $(location {metadata_script}) > $@
-        """.format(metadata_script=":" + name + "_metadata_script"),
-        tools=[":" + name + "_metadata_script"],
+            ${{location("{}")}} --output $@
+        """.format(metadata_script_name),
+        tools=[":{}".format(metadata_script_name)],
     )
