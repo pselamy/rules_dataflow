@@ -11,6 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: reviewdog/action-black@v3
+      - name: Check files using the black formatter
+        uses: rickstaa/action-black@v1
+        id: action_black
         with:
-          github_token: ${{ secrets.github_token }}
+          black_args: "."
+      - name: Annotate diff changes using reviewdog
+        if: steps.action_black.outputs.is_formatted == 'true'
+        uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: blackfmt
+
+permissions:
+  checks: write
+  contents: write
+  issues: write
+  pull-requests: write
