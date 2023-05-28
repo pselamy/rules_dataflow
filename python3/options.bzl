@@ -36,7 +36,7 @@ def dataflow_flex_py3_pipeline_options(
 
     native.genrule(
         name="generate_{}".format(metadata_script_name),
-        srcs=[":{}".format(library_name)],  # change here
+        srcs=[":{}".format(library_name)],
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
