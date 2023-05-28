@@ -1,5 +1,6 @@
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 def dataflow_flex_py3_pipeline_options(
     name,
@@ -34,9 +35,16 @@ def dataflow_flex_py3_pipeline_options(
         **kwargs,
     )
 
+    # Copy the main source file
+    copy_file(
+        name="{}_src_copy".format(name),
+        src=srcs[0],  # Only copy the main source
+        out="{}_copy.py".format(name),  # Output a single file
+    )
+
     native.genrule(
         name="generate_{}".format(metadata_script_name),
-        srcs=[":{}".format(library_name)],
+        srcs=[":{}_src_copy".format(name)],  # Use the copied file
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
