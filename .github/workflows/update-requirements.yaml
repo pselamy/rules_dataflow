@@ -3,11 +3,15 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'requirements.txt'
   push:
     branches:
       - main
+    paths:
+      - 'requirements.txt'
 jobs:
-  go:
+  update-requirements:
     name: runner / suggester / requirements.update
     runs-on: ubuntu-latest
     steps:
