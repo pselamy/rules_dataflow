@@ -10,6 +10,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("src_file", None, "Path to the source file", required=True)
 flags.DEFINE_string("output_file", None, "Path to the output file", required=True)
 
+
 def generate_metadata(src_file, output_file):
     sys.path.insert(0, "")
     module_name = src_file.split(".")[0]
