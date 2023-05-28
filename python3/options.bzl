@@ -1,6 +1,5 @@
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_library")
-load("@bazel_tools//tools/build_defs/genrule.bzl", "genrule")
 
 def dataflow_flex_py3_pipeline_options(
     name,
@@ -33,7 +32,7 @@ def dataflow_flex_py3_pipeline_options(
         **kwargs,
     )
 
-    genrule(
+    native.genrule(
         name="{}.flex_template".format(name),
         srcs=[":{}".format(library_name)],
         outs=["metadata.json"],
