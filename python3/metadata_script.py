@@ -31,18 +31,19 @@ def generate_metadata(src_file, output_file):
             "name": option_name,
             "label": option_label,
             "helpText": option_help_text,
-            "isOptional": True
+            "isOptional": True,
         }
         metadata.append(option_dict)
 
     metadata_json = {
         "name": module_name,
         "description": f"Dataflow Flex Template for {module_name}",
-        "parameters": metadata
+        "parameters": metadata,
     }
 
     with open(output_file, "w") as f:
         json.dump(metadata_json, f, indent=4)
+
 
 def main(argv):
     generate_metadata(FLAGS.src_file, FLAGS.output_file)
