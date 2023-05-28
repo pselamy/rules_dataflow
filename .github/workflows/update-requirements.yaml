@@ -4,12 +4,12 @@ on:
     branches:
       - main
     paths:
-      - 'requirements.txt'
+      - '**/*requirements.txt'
   push:
     branches:
       - main
     paths:
-      - 'requirements.txt'
+      - '**/*requirements.txt'
 jobs:
   update-requirements-dataflow-flex-py3-image:
     name: suggester / requirements.update / dataflow-flex-py3-image
