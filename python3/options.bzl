@@ -68,8 +68,8 @@ def generate_metadata_json():
 
         # Generate metadata JSON based on the options class
         metadata = {
-            "name": '{}',
-            "description": 'Dataflow Flex Template for {}',
+            "name": '{{}}',
+            "description": 'Dataflow Flex Template for {{}}',
             "parameters": [],
         }
 
