@@ -5,6 +5,7 @@ def dataflow_flex_py3_pipeline_options(
     name,
     srcs,
     main_class,
+    deps=[],
     **kwargs,
 ):
     """
@@ -14,6 +15,7 @@ def dataflow_flex_py3_pipeline_options(
         name (str): Name of the target.
         srcs (List[str]): List of source files.
         main_class (str): Name of the main class that extends Apache Beam PipelineOptions.
+        deps (List[str]): List of dependencies for the py_library target.
         **kwargs: Additional keyword arguments to pass to py_library.
 
     Returns:
@@ -21,10 +23,8 @@ def dataflow_flex_py3_pipeline_options(
     """
     library_name = "{}.library".format(name)
     beam_requirement = requirement("apache-beam")
-    deps = deps if beam_requirement in deps else deps + [
-        beam_requirement
-    ]
-    
+    deps = deps if beam_requirement in deps else deps + [beam_requirement]
+
     py_library(
         name=library_name,
         srcs=srcs,
@@ -48,12 +48,10 @@ def dataflow_flex_py3_pipeline_options(
                         import sys, inspect
                         options = inspect.getmembers(sys.modules['__main__'], inspect.isclass)
                         options = [
-                            option[1] for option in options if issubclass(option[1], \
-                            sys.modules['apache_beam'].PipelineOptions)
+                            option[1] for option in options if issubclass(option[1], sys.modules['apache_beam'].PipelineOptions)
                         ]
                         print(','.join([
-                            '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', \
-                            "helpText": \'{option.__doc__}\', "isOptional": true}}' \
+                            '{{"name": \'{option.__name__}\', "label": \'{option.__name__}\', "helpText": \'{option.__doc__}\', "isOptional": true}}' \
                             for option in options
                         ]))
                     ")
