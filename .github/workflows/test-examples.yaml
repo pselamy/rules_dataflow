@@ -32,7 +32,7 @@ jobs:
             pip install ${FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES} && \
             python ${FLEX_TEMPLATE_PYTHON_PY_FILE} \
           '
-  test-dataflow-flex-py3-options-minimal:
+  test-dataflow-flex-py3-pipeline-options-minimal:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -43,6 +43,6 @@ jobs:
         key: bazel
     - name: Run Unit Tests
       run: |
-        cd examples/python3/dataflow_flex_py3_options
+        cd examples/python3/dataflow_flex_py3_pipeline_options
         bazel test //... \
           --test_output=errors
