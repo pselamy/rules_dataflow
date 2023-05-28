@@ -1,5 +1,5 @@
 load("@pip_deps//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "genrule", "py_binary", "py_library")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 def dataflow_flex_py3_pipeline_options(
     name,
