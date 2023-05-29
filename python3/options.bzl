@@ -96,7 +96,7 @@ def generate_metadata_json():
         }}
         metadata["parameters"].append(parameter)
 
-    logging.degug(metadata)
+    logging.debug(metadata)
 
     # Write metadata to a json file
     output_file = sys.argv[2]
