@@ -60,12 +60,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 def generate_metadata_json():
     script_file = sys.argv[1]
-    options_class_name = sys.argv[2]
 
     logging.debug('Importing module...')
     module_name = "{module_name}"
     module = importlib.import_module(module_name)
-    options_class = getattr(module, options_class_name)
+    options_class = getattr(module, "{options_class_name}")
     logging.debug(f'Successfully imported module {module_name}.')
 
     logging.debug('Generating metadata...')
@@ -97,7 +96,7 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, metadata_name=metadata_name, module_name=module_name),
+""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
         tools=[":{}".format(library_name)],
     )
 
