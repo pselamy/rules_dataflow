@@ -90,7 +90,8 @@ def generate_metadata_json():
             metadata["parameters"].append(parameter)
 
     # Write metadata to a json file
-    with open('$@', 'w') as f:
+    output_file = sys.argv[2]
+    with open(output_file, 'w') as f:
         json.dump(metadata, f, indent=4)
 
 if __name__ == "__main__":
