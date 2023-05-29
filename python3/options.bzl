@@ -80,7 +80,11 @@ def generate_metadata_json():
 
     # Iterate over the options class attributes
     for attr_name, attr_value in options.__class__.__dict__.items():
-        if isinstance(attr_value, property) and issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
+        if not isinstance(attr_value, property):
+            logging.debug('Attribute with value %s is not a property' % attr_value)
+            continue
+
+        if issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
             parameter = {{
                 "name": attr_name,
                 "label": attr_name.capitalize().replace("_", " "),
@@ -100,7 +104,6 @@ EOF
 """.format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
         tools=[":{}".format(library_name)],
     )
-
 
     # Define a py_binary target for the metadata generator script
     py_binary(
