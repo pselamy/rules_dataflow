@@ -73,7 +73,6 @@ def generate_metadata_json():
         "description": 'Dataflow Flex Template for {metadata_name}',
         "parameters": [],
     }}
-    logging.debug(f'Successfully generated metadata for {metadata_name}.')
 
     # Retrieve the pipeline options
     options = options_class()
