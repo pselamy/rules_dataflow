@@ -130,4 +130,3 @@ EOF
         ),
         tools=[":{}".format(metadata_script_name)],
     )
-
