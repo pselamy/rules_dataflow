@@ -81,17 +81,20 @@ def generate_metadata_json():
     # Iterate over the options class attributes
     for attr_name, attr_value in options.__class__.__dict__.items():
         if not isinstance(attr_value, property):
-            logging.debug('Attribute with value %s is not a property' % attr_value)
+            logging.debug('Attribute with value %s is not a property', attr_value)
             continue
 
-        if issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
-            parameter = {{
-                "name": attr_name,
-                "label": attr_name.capitalize().replace("_", " "),
-                "helpText": attr_value.__doc__,
-                "isOptional": True,
-            }}
-            metadata["parameters"].append(parameter)
+        if not issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
+            logging.debug('Property with value %s is not a ValueProvider', attr_value)
+            continue
+
+        parameter = {{
+            "name": attr_name,
+            "label": attr_name.capitalize().replace("_", " "),
+            "helpText": attr_value.__doc__,
+            "isOptional": True,
+        }}
+        metadata["parameters"].append(parameter)
 
     # Write metadata to a json file
     output_file = sys.argv[2]
