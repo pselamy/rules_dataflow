@@ -73,29 +73,21 @@ def generate_metadata_json():
         "description": 'Dataflow Flex Template for {metadata_name}',
         "parameters": [],
     }}
+    logging.debug(f'Successfully generated metadata for {metadata_name}.')
 
     # Retrieve the pipeline options
     options = options_class()
 
     # Iterate over the options class attributes
     for attr_name, attr_value in options.__class__.__dict__.items():
-        if not isinstance(attr_value, property):
-            logging.debug('Attribute %s is not a property' % attr_name)
-            continue
-
-        logging.debug('Found a property: %s' % attr_name)
-        if not issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
-            logging.debug('Property %s is not a ValueProvider' % attr_name)
-            continue
-        
-        
-        parameter = {
-            "name": attr_name,
-            "label": attr_name.capitalize().replace("_", " "),
-            "helpText": attr_value.__doc__,
-            "isOptional": True,
-        }
-        metadata["parameters"].append(parameter)
+        if isinstance(attr_value, property) and issubclass(attr_value.fget.__class__, apache_beam.options.value_provider.ValueProvider):
+            parameter = {{
+                "name": attr_name,
+                "label": attr_name.capitalize().replace("_", " "),
+                "helpText": attr_value.__doc__,
+                "isOptional": True,
+            }}
+            metadata["parameters"].append(parameter)
 
     # Write metadata to a json file
     output_file = sys.argv[2]
