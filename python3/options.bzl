@@ -87,7 +87,7 @@ def generate_metadata_json():
 
         parameter = {{
             "name": action.dest,
-            "label": action.dest.capitalize().replace("_", " "),
+            "label": action.dest.replace("_", " ").title(),
             "helpText": action.help,
             "isOptional": action.default is not None,
         }}
