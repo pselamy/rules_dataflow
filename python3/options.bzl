@@ -49,7 +49,7 @@ def dataflow_flex_py3_pipeline_options(
     native.genrule(
         name="generate_{}".format(metadata_script_name),
         outs=["{}.py".format(metadata_script_name)],
-                cmd=r"""
+        cmd=r"""
 cat > $@ << 'EOF'
 import importlib
 import json
@@ -80,12 +80,12 @@ def generate_metadata_json():
 
     # Iterate over the actions added to the parser
     for action in parser._actions:
-        parameter = {
+        parameter = {{
             "name": action.dest,
             "label": action.dest.capitalize().replace("_", " "),
             "helpText": action.help,
             "isOptional": action.default is not None,
-        }
+        }}
         metadata["parameters"].append(parameter)
 
 
@@ -99,9 +99,8 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
-        tools=[":{}".format(library_name)],
-    )
+    """.format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
+
 
     # Define a py_binary target for the metadata generator script
     py_binary(
