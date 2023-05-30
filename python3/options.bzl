@@ -31,7 +31,7 @@ def dataflow_flex_py3_pipeline_options(
     metadata_script_name = "{}_metadata_script".format(name)
     metadata_name = "{}_metadata".format(name)
     # Assumes that there's only a single source file which is a python file
-    module_name = srcs[0].replace("/", ".").rstrip(".py")
+    module_name = srcs[0].split("/")[-1].rstrip(".py")
 
     # Add apache-beam requirement to deps if it's not already there
     beam_requirement = requirement("apache-beam")
