@@ -56,6 +56,8 @@ import json
 import sys
 import logging
 
+import argparse
+
 logging.basicConfig(level=logging.DEBUG)
 
 def generate_metadata_json():
