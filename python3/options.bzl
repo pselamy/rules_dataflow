@@ -71,7 +71,7 @@ def generate_metadata_json():
 
     logging.debug('Generating metadata...')
     metadata = {{
-        "name": '{name}',
+        "name": '{name}'.replace("_", " ").title(),
         "description": 'Dataflow Flex Template for {metadata_name}',
         "parameters": [],
     }}
