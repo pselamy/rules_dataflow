@@ -82,6 +82,9 @@ def generate_metadata_json():
 
     # Iterate over the actions added to the parser
     for action in parser._actions:
+        if action.dest == "help":
+            continue
+
         parameter = {{
             "name": action.dest,
             "label": action.dest.capitalize().replace("_", " "),
