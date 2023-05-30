@@ -67,12 +67,13 @@ def generate_metadata_json():
     module_name = "{module_name}"
     module = importlib.import_module(module_name)
     options_class = getattr(module, "{options_class_name}")
-    logging.debug(f'Successfully imported module {module_name}.')
+    logging.debug('Successfully imported module %s.', module_name)
 
     logging.debug('Generating metadata...')
+    name = "{name}".replace("_", " ").title()
     metadata = {{
-        "name": '{name}'.replace("_", " ").title(),
-        "description": 'Dataflow Flex Template for {metadata_name}',
+        "name": name,
+        "description": 'Dataflow Flex Template for %s' % name,
         "parameters": [],
     }}
 
@@ -92,7 +93,6 @@ def generate_metadata_json():
             "isOptional": action.default is not None,
         }}
         metadata["parameters"].append(parameter)
-
 
     logging.debug(metadata)
 
