@@ -99,8 +99,9 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-    """.format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
-
+""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=main_class),
+        tools=[":{}".format(library_name)],
+    )
 
     # Define a py_binary target for the metadata generator script
     py_binary(
