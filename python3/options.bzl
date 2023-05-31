@@ -57,9 +57,10 @@ def dataflow_flex_py3_pipeline_options(
     native.genrule(
         name="generate_{}".format(metadata_script_name),
         outs=["{}.py".format(metadata_script_name)],
+        srcs=[src],
         cmd=r"""
 cat > $@ << 'EOF'
-import importlib
+import importlib.util
 import json
 import sys
 import logging
@@ -68,12 +69,17 @@ import argparse
 
 logging.basicConfig(level=logging.DEBUG)
 
-def generate_metadata_json():
+def generate_metadata_json(script_file, output_file):
     script_file = sys.argv[1]
 
     logging.debug('Importing module...')
     module_name = "{module_name}"
-    module = importlib.import_module(module_name)
+
+    spec = importlib.util.spec_from_file_location(module_name, script_file)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    
     options_class = getattr(module, "{options_class}")
     logging.debug('Successfully imported module %s.', module_name)
 
@@ -109,7 +115,9 @@ def generate_metadata_json():
         print(json.dumps(metadata, indent=4),file=f)
 
 if __name__ == "__main__":
-    generate_metadata_json()
+    script_file = sys.argv[1]
+    output_file = sys.argv[2]
+    generate_metadata_json(script_file, output_file)
 EOF
 """.format(
             metadata_name=metadata_name,
@@ -134,9 +142,10 @@ EOF
     native.genrule(
         name="generate_{}".format(metadata_target_name),
         outs=["{}.json".format(metadata_target_name)],
-        cmd=r"$(location :{metadata_script_name}) --output $@ $(location :{metadata_script_name}) {options_class}".format(
+        cmd=r"$(location :{metadata_script_name}) $(location :{name}) $@".format(
             metadata_script_name=metadata_script_name,
-            options_class=options_class,
+            name=name,
         ),
-        tools=[":{}".format(metadata_script_name)],
+        tools=[":{}".format(metadata_script_name), ":{}".format(name)],
     )
+
