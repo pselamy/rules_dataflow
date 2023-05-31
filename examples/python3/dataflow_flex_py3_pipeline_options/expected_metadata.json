@@ -1,0 +1,24 @@
+{
+    "name": "Profile Pipeline Options",
+    "description": "Dataflow Flex Template for Profile Pipeline Options",
+    "parameters": [
+        {
+            "name": "input",
+            "label": "Input",
+            "helpText": "Input file or directory for the profile pipeline.",
+            "isOptional": true
+        },
+        {
+            "name": "output",
+            "label": "Output",
+            "helpText": "Output directory for the profile pipeline.",
+            "isOptional": true
+        },
+        {
+            "name": "profile_id",
+            "label": "Profile Id",
+            "helpText": "ID of the profile for the profile pipeline.",
+            "isOptional": true
+        }
+    ]
+}
