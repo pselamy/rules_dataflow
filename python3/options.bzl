@@ -112,6 +112,8 @@ def generate_metadata_json(script_file, output_file):
     with open(output_file, 'w') as f:
         print(json.dumps(metadata, indent=4),file=f)
 
+    logging.debug("Successfully generated metadata file: %s" % output_file)
+
 if __name__ == "__main__":
     script_file = sys.argv[1]
     output_file = sys.argv[2]
