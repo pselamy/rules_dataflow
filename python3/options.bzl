@@ -120,7 +120,7 @@ EOF
             metadata_name=metadata_name,
             metadata_description=metadata_description,
             module_name=module_name,
-            module_path=module_path,
+            module_path="$(location :{})".format(src),
             options_class=options_class
         ),
         tools=[":{}".format(name)],
