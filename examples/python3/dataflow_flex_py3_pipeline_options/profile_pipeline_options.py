@@ -19,6 +19,5 @@ class ProfilePipelineOptions(pipeline_options.PipelineOptions):
         parser.add_argument(
             "--profile_id",
             dest="profile_id",
-            default="12345",
             help="ID of the profile for the profile pipeline.",
         )
