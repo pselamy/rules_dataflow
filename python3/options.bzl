@@ -123,6 +123,7 @@ EOF
             module_path="$(location :{})".format(src),
             options_class=options_class
         ),
+        srcs=[src],
         tools=[":{}".format(name)],
     )
 
