@@ -14,7 +14,7 @@ dataflow_flex_py3_pipeline_options(
   options_class = "ProfilePipelineOptions",
   metadata_name = "Profile Pipeline Options",
   metadata_description = "Dataflow Flex Template for Profile Pipeline Options",
-  srcs = ["profile_pipeline_options.py"],
+  src = "profile_pipeline_options.py",
   deps = [
     requirement("apache-beam"),
   ],
