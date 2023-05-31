@@ -1,0 +1,65 @@
+
+workspace(name = "examples_dataflow_flex_py3_pipeline_options")
+
+# Load the git_repository rule to fetch external dependencies
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+##########################
+##### SKYLIB SUPPORT #####
+##########################
+# Fetch Bazel Skylib for additional functionality
+git_repository(
+    name = "bazel_skylib",
+    remote = "https://github.com/bazelbuild/bazel-skylib",
+    tag = "1.4.1",
+)
+
+# Load the Bazel Skylib workspace rules
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+# Apply the Bazel Skylib workspace rules
+bazel_skylib_workspace()
+
+##########################
+##### PYTHON SUPPORT #####
+##########################
+# Fetch Bazel Rules Python for Python support
+git_repository(
+    name = "rules_python",
+    remote = "https://github.com/bazelbuild/rules_python",
+    tag = "0.20.0",
+)
+
+# Load the Python toolchain rules
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+
+# Register Python 3.10 as the toolchain version
+python_register_toolchains(
+    name = "python3_10",
+    python_version = "3.10",
+)
+
+# Load the Python interpreter and pip rules
+load("@python3_10//:defs.bzl", "interpreter")
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+# Parse the requirements from requirements_lock.txt
+pip_parse(
+    name = "pip_deps",
+    python_interpreter_target = interpreter,
+    requirements_lock = "//:requirements_lock.txt",
+)
+
+# Load the install_deps macro to define repository rules for the dependencies
+load("@pip_deps//:requirements.bzl", "install_deps")
+
+# Call the install_deps macro to define repository rules for the requirements
+install_deps()
+
+##########################
+#### DATAFLOW SUPPORT ####
+##########################
+local_repository(
+    name = "rules_dataflow",
+    path = "../../../",
+)
