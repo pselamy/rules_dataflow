@@ -29,7 +29,7 @@ def dataflow_flex_py3_pipeline_options(
     # Format library and script names using the base name
     library_target_name = "{}.library".format(name)
     metadata_script_name = "{}.metadata_script".format(name)
-    metadata_name = "{}.metadata".format(name)
+    metadata_target_name = "{}.metadata".format(name)
     # Assumes that there's only a single source file which is a python file
     module_name = srcs[0].split("/")[-1].rstrip(".py")
 
@@ -104,7 +104,7 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=options_class),
+""".format(name=name, module_name=module_name, options_class_name=options_class),
         tools=[":{}".format(library_target_name)],
     )
 
@@ -120,8 +120,8 @@ EOF
 
     # Define a genrule target that runs the metadata generator script and writes the output to a json file
     native.genrule(
-        name="generate_{}".format(metadata_name),
-        outs=["{}.json".format(metadata_name)],
+        name="generate_{}".format(metadata_target_name),
+        outs=["{}.json".format(metadata_target_name)],
         cmd=r"$(location :{metadata_script_name}) --output $@ $(location :{metadata_script_name}) {options_class}".format(
             metadata_script_name=metadata_script_name,
             options_class=options_class,
