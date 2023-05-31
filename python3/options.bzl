@@ -73,7 +73,12 @@ def generate_metadata_json():
 
     logging.debug('Importing module...')
     module_name = "{module_name}"
-    module = importlib.import_module(module_name)
+
+    spec = importlib.util.spec_from_file_location(module_name, "{module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    
     options_class = getattr(module, "{options_class}")
     logging.debug('Successfully imported module %s.', module_name)
 
@@ -115,6 +120,7 @@ EOF
             metadata_name=metadata_name,
             metadata_description=metadata_description,
             module_name=module_name,
+            module_path=module_path,
             options_class=options_class
         ),
         tools=[":{}".format(name)],
