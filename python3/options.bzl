@@ -7,6 +7,8 @@ def dataflow_flex_py3_pipeline_options(
     name,
     srcs,
     options_class,
+    metadata_name,
+    metadata_description,
     deps=[],
     **kwargs,
 ):
@@ -104,7 +106,13 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, module_name=module_name, options_class_name=options_class),
+""".format(
+            name=name,
+            metadata_name=metadata_name,
+            metadata_description=metadata_description,
+            module_name=module_name,
+            options_class_name=options_class
+        ),
         tools=[":{}".format(library_target_name)],
     )
 
