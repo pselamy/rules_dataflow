@@ -19,19 +19,25 @@ def dataflow_flex_py3_pipeline_options(
 
     Args:
         name (str): Name of the rule, also used as a base name for generated targets.
-        srcs (List[str]): Source files for the pipeline.
+        srcs (List[str]): List of python source files for the pipeline.
         options_class (str): The name of the main pipeline options class in the source.
-        deps (List[str], optional): Additional dependencies needed by the pipeline script.
-        **kwargs: Additional keyword arguments.
+        metadata_name (str): Name of the pipeline, to be used in the metadata.
+        metadata_description (str): Description of the pipeline, to be used in the metadata.
+        deps (List[str], optional): Additional dependencies needed by the pipeline script. Defaults to an empty list.
+        **kwargs: Additional keyword arguments that will be passed to the py_library rule.
 
-    Returns:
-        None
+    This function defines several bazel targets internally:
+    - A python library target for the pipeline script.
+    - A genrule target for generating a python script that generates the metadata json.
+    - A python binary target for the generated script.
+    - A genrule target that runs the script and writes the metadata json to a file.
+
     """
 
-    # Format library and script names using the base name
-    library_target_name = "{}.library".format(name)
+    # Format target and script names using the base name
     metadata_script_name = "{}.metadata_script".format(name)
     metadata_target_name = "{}.metadata".format(name)
+    
     # Assumes that there's only a single source file which is a python file
     module_name = srcs[0].split("/")[-1].rstrip(".py")
 
@@ -41,7 +47,7 @@ def dataflow_flex_py3_pipeline_options(
 
     # Define a py_library target for the pipeline script
     py_library(
-        name=library_target_name,
+        name=name,
         srcs=srcs,
         deps=deps,
         **kwargs,
@@ -111,7 +117,7 @@ EOF
             module_name=module_name,
             options_class=options_class
         ),
-        tools=[":{}".format(library_target_name)],
+        tools=[":{}".format(name)],
     )
 
     # Define a py_binary target for the metadata generator script
@@ -119,7 +125,7 @@ EOF
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
         deps=[
-            ":{}".format(library_target_name),
+            ":{}".format(name),
             beam_requirement,
         ],
     )
