@@ -68,14 +68,13 @@ def generate_metadata_json():
     logging.debug('Importing module...')
     module_name = "{module_name}"
     module = importlib.import_module(module_name)
-    options_class = getattr(module, "{options_class_name}")
+    options_class = getattr(module, "{options_class}")
     logging.debug('Successfully imported module %s.', module_name)
 
     logging.debug('Generating metadata...')
-    name = "{name}".replace("_", " ").title()
     metadata = {{
-        "name": name,
-        "description": 'Dataflow Flex Template for %s' % name,
+        "name": "{metadata_name}",
+        "description": "{metadata_description}",
         "parameters": [],
     }}
 
@@ -107,11 +106,10 @@ if __name__ == "__main__":
     generate_metadata_json()
 EOF
 """.format(
-            name=name,
             metadata_name=metadata_name,
             metadata_description=metadata_description,
             module_name=module_name,
-            options_class_name=options_class
+            options_class=options_class
         ),
         tools=[":{}".format(library_target_name)],
     )
