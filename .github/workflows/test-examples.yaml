@@ -48,6 +48,7 @@ jobs:
           --test_output=errors
     - name: Verify metadata.json file
       run: |
+        cd examples/python3/dataflow_flex_py3_pipeline_options
         diff bazel-bin/profile_pipeline_options_metadata.json expected_metadata.json > /dev/null
         if [ $? -ne 0 ]
         then
