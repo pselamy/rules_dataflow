@@ -10,6 +10,7 @@ def dataflow_flex_py3_pipeline_options(
     metadata_name,
     metadata_description,
     deps=[],
+    tags=[],
     **kwargs,
 ):
     """
@@ -24,6 +25,7 @@ def dataflow_flex_py3_pipeline_options(
         metadata_name (str): Name of the pipeline, to be used in the metadata.
         metadata_description (str): Description of the pipeline, to be used in the metadata.
         deps (List[str], optional): Additional dependencies needed by the pipeline options script. Defaults to an empty list.
+        tags (List[str], optional): Bazel tags. Defaults to an empty list.
         **kwargs: Additional keyword arguments that will be passed to the py_library rule.
 
     This function defines several bazel targets internally:
@@ -50,6 +52,7 @@ def dataflow_flex_py3_pipeline_options(
         name=name,
         srcs=[src],
         deps=deps,
+        tags=tags,
         **kwargs,
     )
 
@@ -147,5 +150,6 @@ EOF
             name=name,
         ),
         tools=[":{}".format(metadata_script_name), ":{}".format(name)],
+        tags=tags,
     )
 
