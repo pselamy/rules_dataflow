@@ -99,7 +99,7 @@ def generate_metadata_json():
     # Write metadata to a json file
     output_file = sys.argv[2]
     with open(output_file, 'w') as f:
-        json.dump(metadata, f, indent=4)
+        print(json.dumps(metadata, indent=4),file=f)
 
 if __name__ == "__main__":
     generate_metadata_json()
