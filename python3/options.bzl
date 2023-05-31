@@ -59,7 +59,7 @@ def dataflow_flex_py3_pipeline_options(
         outs=["{}.py".format(metadata_script_name)],
         cmd=r"""
 cat > $@ << 'EOF'
-import importlib
+import importlib.util
 import json
 import sys
 import logging
