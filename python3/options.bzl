@@ -27,7 +27,7 @@ def dataflow_flex_py3_pipeline_options(
     """
 
     # Format library and script names using the base name
-    library_name = "{}.library".format(name)
+    library_target_name = "{}.library".format(name)
     metadata_script_name = "{}.metadata_script".format(name)
     metadata_name = "{}.metadata".format(name)
     # Assumes that there's only a single source file which is a python file
@@ -39,7 +39,7 @@ def dataflow_flex_py3_pipeline_options(
 
     # Define a py_library target for the pipeline script
     py_library(
-        name=library_name,
+        name=library_target_name,
         srcs=srcs,
         deps=deps,
         **kwargs,
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     generate_metadata_json()
 EOF
 """.format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=options_class),
-        tools=[":{}".format(library_name)],
+        tools=[":{}".format(library_target_name)],
     )
 
     # Define a py_binary target for the metadata generator script
@@ -113,7 +113,7 @@ EOF
         name=metadata_script_name,
         srcs=["{}.py".format(metadata_script_name)],
         deps=[
-            ":{}".format(library_name),
+            ":{}".format(library_target_name),
             beam_requirement,
         ],
     )
