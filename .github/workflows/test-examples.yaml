@@ -49,7 +49,7 @@ jobs:
     - name: Verify metadata.json file
       run: |
         cd examples/python3/dataflow_flex_py3_pipeline_options
-        diff bazel-bin/profile_pipeline_options_metadata.json expected_metadata.json
+        diff bazel-bin/profile_pipeline_options.metadata.json expected_metadata.json
         if [ $? -ne 0 ]
         then
           echo "Difference detected!"
