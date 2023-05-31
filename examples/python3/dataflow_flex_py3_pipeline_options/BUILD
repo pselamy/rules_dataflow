@@ -11,7 +11,7 @@ compile_pip_requirements(
 
 dataflow_flex_py3_pipeline_options(
   name = "profile_pipeline_options",
-  main_class = "ProfilePipelineOptions",
+  options_class_name = "ProfilePipelineOptions",
   srcs = ["profile_pipeline_options.py"],
   deps = [
     requirement("apache-beam"),
