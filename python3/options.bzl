@@ -5,7 +5,7 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 def dataflow_flex_py3_pipeline_options(
     name,
-    srcs,
+    src,
     options_class,
     metadata_name,
     metadata_description,
@@ -19,11 +19,11 @@ def dataflow_flex_py3_pipeline_options(
 
     Args:
         name (str): Name of the rule, also used as a base name for generated targets.
-        srcs (List[str]): List of python source files for the pipeline.
+        src (str): The python source file for the pipeline options.
         options_class (str): The name of the main pipeline options class in the source.
         metadata_name (str): Name of the pipeline, to be used in the metadata.
         metadata_description (str): Description of the pipeline, to be used in the metadata.
-        deps (List[str], optional): Additional dependencies needed by the pipeline script. Defaults to an empty list.
+        deps (List[str], optional): Additional dependencies needed by the pipeline options script. Defaults to an empty list.
         **kwargs: Additional keyword arguments that will be passed to the py_library rule.
 
     This function defines several bazel targets internally:
@@ -38,8 +38,8 @@ def dataflow_flex_py3_pipeline_options(
     metadata_script_name = "{}.metadata_script".format(name)
     metadata_target_name = "{}.metadata".format(name)
     
-    # Assumes that there's only a single source file which is a python file
-    module_name = srcs[0].split("/")[-1].rstrip(".py")
+    # Extract module name from python file name
+    module_name = src.split("/")[-1].rstrip(".py")
 
     # Add apache-beam requirement to deps if it's not already there
     beam_requirement = requirement("apache-beam")
@@ -48,7 +48,7 @@ def dataflow_flex_py3_pipeline_options(
     # Define a py_library target for the pipeline script
     py_library(
         name=name,
-        srcs=srcs,
+        srcs=[src],
         deps=deps,
         **kwargs,
     )
