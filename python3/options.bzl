@@ -6,7 +6,7 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 def dataflow_flex_py3_pipeline_options(
     name,
     srcs,
-    options_class_name,
+    options_class,
     deps=[],
     **kwargs,
 ):
@@ -18,7 +18,7 @@ def dataflow_flex_py3_pipeline_options(
     Args:
         name (str): Name of the rule, also used as a base name for generated targets.
         srcs (List[str]): Source files for the pipeline.
-        options_class_name (str): The name of the main pipeline options class in the source.
+        options_class (str): The name of the main pipeline options class in the source.
         deps (List[str], optional): Additional dependencies needed by the pipeline script.
         **kwargs: Additional keyword arguments.
 
@@ -104,7 +104,7 @@ def generate_metadata_json():
 if __name__ == "__main__":
     generate_metadata_json()
 EOF
-""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=options_class_name),
+""".format(name=name, metadata_name=metadata_name, module_name=module_name, options_class_name=options_class),
         tools=[":{}".format(library_name)],
     )
 
