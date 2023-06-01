@@ -49,7 +49,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
 
   # Generate names for intermediate targets
-  container_image_name = "{}.container"
+  container_image_name = "{}.container".format(name)
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
   distribution = distribution or name
