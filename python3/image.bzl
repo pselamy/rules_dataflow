@@ -83,13 +83,13 @@ def dataflow_flex_py3_image(
   container_run_and_commit(
     name=name,
     image=":{}.tar".format(container_image_name),
-    commands=["""
+    commands=[
       'destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}',
       '[ -e "${destination_file}" ] && echo "File at ${destination_file} already exists. Exiting..." && exit 0',
       'source_files=$(find . -name ${FLEX_TEMPLATE_PYTHON_PY_FILE})',
       '[ -z "$source_files" ] && echo "No source file found" && exit 1',
       'for source_file in $source_files; do [ ! -e "${destination_file}" ] && cp ${source_file} ${destination_file} && break; done',
-    """],
+    ],
   )
 
   container_image(
