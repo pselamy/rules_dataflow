@@ -82,6 +82,7 @@ def dataflow_flex_py3_image(
 
   container_run_and_commit(
     name=name,
+    image=container_image_name,
     commands=["""
 destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}
 
