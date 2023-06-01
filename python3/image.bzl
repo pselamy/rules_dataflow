@@ -48,6 +48,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
 
   # Generate names for intermediate targets
+  container_image_name = "{}.container"
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
   distribution = distribution or name
@@ -78,8 +79,33 @@ def dataflow_flex_py3_image(
     if r not in layers and r not in deps
   ]
 
-  container_image(
+  container_run_and_commit(
     name=name,
+    commands=["""
+destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}
+
+# Use 'find' to locate the file in any subdirectory
+source_files=$(find . -name ${FLEX_TEMPLATE_PYTHON_PY_FILE})
+
+if [ -z "$source_files" ]; then
+    echo "No source file found"
+    exit 1
+else
+    for source_file in $source_files; do
+        if [ "${source_file}" == "${destination_file}" ]; then
+            echo "Source and destination paths are the same. Breaking..."
+            break
+        elif [ ! -e "${destination_file}" ]; then
+            cp ${source_file} ${destination_file}
+            break
+        fi
+    done
+fi  
+    """],
+  )
+
+  container_image(
+    name=container_image_name,
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
     env={
