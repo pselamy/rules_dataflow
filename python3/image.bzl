@@ -85,6 +85,10 @@ def dataflow_flex_py3_image(
     image="{}.tar".format(container_image_name),
     commands=["""
 destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}
+if [ -e "${destination_file}" ]; then
+    echo "File at ${destination_file} already exists. Exiting..."
+    exit 0
+fi
 
 # Use 'find' to locate the file in any subdirectory
 source_files=$(find . -name ${FLEX_TEMPLATE_PYTHON_PY_FILE})
@@ -92,17 +96,14 @@ source_files=$(find . -name ${FLEX_TEMPLATE_PYTHON_PY_FILE})
 if [ -z "$source_files" ]; then
     echo "No source file found"
     exit 1
-else
-    for source_file in $source_files; do
-        if [ "${source_file}" == "${destination_file}" ]; then
-            echo "Source and destination paths are the same. Breaking..."
-            break
-        elif [ ! -e "${destination_file}" ]; then
-            cp ${source_file} ${destination_file}
-            break
-        fi
-    done
-fi  
+fi
+
+for source_file in $source_files; do
+    if [ ! -e "${destination_file}" ]; then
+        cp ${source_file} ${destination_file}
+        break
+    fi
+done
     """],
   )
 
