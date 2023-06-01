@@ -82,7 +82,7 @@ def dataflow_flex_py3_image(
 
   container_run_and_commit(
     name=name,
-    image=":{}".format(container_image_name),
+    image=":{}.tar".format(container_image_name),
     commands=["""
 destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}
 if [ -e "${destination_file}" ]; then
