@@ -12,7 +12,7 @@ py_library(
         requirement("faker"),
         ":models",
     ],
-    visibility = ["//:__pkg__"],
+    visibility = ["//:__subpackages__"],
 )
 
 py_test(
@@ -30,7 +30,7 @@ py_library(
     deps = [
         ":models",
     ],
-    visibility = ["//:__pkg__"],
+    visibility = ["//:__subpackages__"],
 )
 
 py_test(
