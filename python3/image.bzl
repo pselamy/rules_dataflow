@@ -86,6 +86,7 @@ def dataflow_flex_py3_image(
     commands=[
       'destination_file=${FLEX_TEMPLATE_PYTHON_PY_FILE}',
       '[ -e "${destination_file}" ] && echo "File at ${destination_file} already exists. Exiting..." && exit 0',
+      'echo "Searching for ${FLEX_TEMPLATE_PYTHON_PY_FILE}..."',
       'source_files=$(find . -name ${FLEX_TEMPLATE_PYTHON_PY_FILE})',
       '[ -z "$source_files" ] && echo "No source file found" && exit 1',
       'for source_file in $source_files; do [ ! -e "${destination_file}" ] && cp ${source_file} ${destination_file} && break; done',
