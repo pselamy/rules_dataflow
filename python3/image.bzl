@@ -78,12 +78,16 @@ def dataflow_flex_py3_image(
     if r not in layers and r not in deps
   ]
 
+  # Compute the package path
+  package_name = native.package_name()
+  package_path = package_name + "/" if package_name else ""
+
   container_image(
     name=name,
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
     env={
-      "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name,
+      "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
       "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
