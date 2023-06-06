@@ -35,6 +35,7 @@ def dataflow_flex_py3_pipeline_options(
     - A genrule target that runs the script and writes the metadata json to a file.
 
     """
+    src = src or "{}.py".format(name)
 
     # Format target and script names using the base name
     metadata_script_name = "{}.metadata_script".format(name)
