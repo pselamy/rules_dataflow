@@ -23,7 +23,7 @@ def dataflow_flex_py3_pipeline_options(
         options_class (str): The name of the main pipeline options class in the source.
         metadata_name (str): Name of the pipeline, to be used in the metadata.
         metadata_description (str): Description of the pipeline, to be used in the metadata.
-        src (str): The python source file for the pipeline options. Defaults to name + .py.
+        src (str): The Python source file for the pipeline options. Defaults to name + .py.
         deps (List[str], optional): Additional dependencies needed by the pipeline options script. Defaults to an empty list.
         tags (List[str], optional): Bazel tags. Defaults to an empty list.
         **kwargs: Additional keyword arguments that will be passed to the py_library rule.
