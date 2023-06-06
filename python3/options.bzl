@@ -5,10 +5,10 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 def dataflow_flex_py3_pipeline_options(
     name,
-    src,
     options_class,
     metadata_name,
     metadata_description,
+    src="",
     deps=[],
     tags=[],
     **kwargs,
@@ -20,10 +20,10 @@ def dataflow_flex_py3_pipeline_options(
 
     Args:
         name (str): Name of the rule, also used as a base name for generated targets.
-        src (str): The python source file for the pipeline options.
         options_class (str): The name of the main pipeline options class in the source.
         metadata_name (str): Name of the pipeline, to be used in the metadata.
         metadata_description (str): Description of the pipeline, to be used in the metadata.
+        src (str): The python source file for the pipeline options. Defaults to name + .py.
         deps (List[str], optional): Additional dependencies needed by the pipeline options script. Defaults to an empty list.
         tags (List[str], optional): Bazel tags. Defaults to an empty list.
         **kwargs: Additional keyword arguments that will be passed to the py_library rule.
