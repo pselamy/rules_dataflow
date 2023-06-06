@@ -102,6 +102,9 @@ def generate_metadata_json(script_file, output_file):
         if action.dest == "help":
             continue
 
+        if not action.help:
+            raise ValueError("%s is missing help text." % action.dest)
+
         parameter = {{
             "name": action.dest,
             "label": action.dest.replace("_", " ").title(),
