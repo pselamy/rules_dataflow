@@ -100,7 +100,6 @@ def dataflow_flex_py3_image(
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
       ":{}".format(py_wheel_name)
