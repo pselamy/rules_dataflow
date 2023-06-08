@@ -9,6 +9,7 @@ def dataflow_flex_py3_image(
   name,
   app_version,
   base,
+  visibility=["//visibility:private"],
   srcs=[],
   main="",
   distribution="",
@@ -27,6 +28,7 @@ def dataflow_flex_py3_image(
     name (str): Name of the Docker image.
     app_version (str): Application version.
     base (str): Base image for the Docker image.
+    visibility (str): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list contaiing main.
     main (str, optional): Main source file. Defaults to name + .py.
     distribution (str, optional): Distribution file. Defaults to the value of name.
@@ -79,7 +81,11 @@ def dataflow_flex_py3_image(
     for r in required_deps
     if r not in layers and r not in deps
   ]
-
+  
+  # Compute the package path
+  package_name = native.package_name()
+  package_path = package_name + "/" if package_name else ""
+  
   container_run_and_commit(
     name=name,
     image=":{}.tar".format(container_image_name),
@@ -93,12 +99,13 @@ def dataflow_flex_py3_image(
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
     env={
-      "FLEX_TEMPLATE_PYTHON_PY_FILE": py_binary_name,
+      "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
       "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
       ":{}".format(py_wheel_name)
-    ]
+    ],
+    visibility=visibility,
   )
 
   py3_image(
@@ -108,7 +115,8 @@ def dataflow_flex_py3_image(
     base=base,
     main=main,
     deps=deps,
-    layers = layers,
+    layers=layers,
+    visibility=visibility,
     **kwargs,
   )
 
