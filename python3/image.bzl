@@ -133,10 +133,10 @@ def dataflow_flex_py3_image(
     deps=deps,
     layers=layers,
     visibility=visibility,
-    **kwargs,
     # Bazel injected init files can break python import.
     # https://github.com/bazelbuild/rules_python/issues/55
-    legacy_create_init = False,
+    legacy_create_init=False,
+    **kwargs,
   )
 
   py_package(
