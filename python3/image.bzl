@@ -112,8 +112,6 @@ def dataflow_flex_py3_image(
           "/usr/bin/python": "/usr/local/bin/python",
           "/usr/bin/python3": "/usr/local/bin/python3",
       },
-      stamp = True,
-      creation_time = "{BUILD_TIMESTAMP}",
   )
 
   # Use pip to install the dependencies inside the container.
