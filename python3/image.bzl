@@ -90,6 +90,7 @@ def dataflow_flex_py3_image(
       name = base_container_image_name,
       # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
       base = base,
+      entrypoint=entrypoint,    
       env={
         "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
       },
