@@ -15,6 +15,15 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
+###########################
+####### PKG SUPPORT #######
+###########################
+git_repository(
+    name = "rules_python",
+    remote = "https://github.com/bazelbuild/rules_pkg",
+    tag = "0.9.1",
+)
+
 ##########################
 ##### PYTHON SUPPORT #####
 ##########################
