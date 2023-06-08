@@ -1,4 +1,4 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_run_and_commit")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:packaging.bzl", "py_package")
@@ -84,11 +84,13 @@ def dataflow_flex_py3_image(
   package_name = native.package_name()
   package_path = package_name + "/" if package_name else ""
 
-  container_image(
+  container_run_and_commit(
     name=name,
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
-    cmd=["bash", "-c", "pip install /{}".format(py_wheel_path)],
+    cmd=[
+      "pip", "install", "/{}".format(py_wheel_path)
+    ],
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
     },
@@ -111,20 +113,20 @@ def dataflow_flex_py3_image(
   )
 
   py_package(
-    name = py_package_name,
-    packages = packages,
-    deps = [
+    name=py_package_name,
+    packages=packages,
+    deps=[
       ":{}".format(py_binary_name),
     ],
   )
-  
+
   py_wheel(
-    name = py_wheel_name,
+    name=py_wheel_name,
     # {name}-{version}-{python_tag}-none-any.whl
-    distribution = distribution,
-    version = app_version,
-    requires = requires,
-    deps = [
+    distribution=distribution,
+    version=app_version,
+    requires=requires,
+    deps=[
       ":{}".format(py_package_name),
     ],
   )
