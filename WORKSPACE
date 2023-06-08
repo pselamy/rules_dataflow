@@ -24,6 +24,9 @@ git_repository(
     tag = "0.9.1",
 )
 
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+rules_pkg_dependencies()
+
 ##########################
 ##### PYTHON SUPPORT #####
 ##########################
