@@ -30,6 +30,6 @@ py_test(
     name = "profile_pipeline_test",
     srcs = ["profile_pipeline_test.py"],
     deps = [
-      ":profile_pipeline.base.binary",  
+      ":profile_pipeline.binary",  
     ],
 )
