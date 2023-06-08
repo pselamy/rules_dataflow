@@ -88,9 +88,9 @@ def dataflow_flex_py3_image(
     name=name,
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
+    cmd=["bash", "-c", "pip install /{}".format(py_wheel_path)],
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
       ":{}".format(py_wheel_name)
