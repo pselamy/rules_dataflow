@@ -50,8 +50,9 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
 
   # Generate names for intermediate targets
-  py3_image_name = "{}.base".format(name)
-  py_binary_name = "{}.binary".format(py3_image_name)
+  base_container_image_name = "{}.base".format(name)
+  deps_container_image_name = "{}.deps".format(name)
+  py_binary_name = "{}.binary".format(name)
   distribution = distribution or name
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
@@ -84,30 +85,56 @@ def dataflow_flex_py3_image(
   package_name = native.package_name()
   package_path = package_name + "/" if package_name else ""
 
+  # Package wheel into a tar so we can load it into the container image.
+  pkg_tar(
+      name = "etc",
+      package_dir = "/etc",
+      srcs = [
+        ":{}".format(py_wheel_name),
+      ],
+      mode = "0644",
+      visibility = ["//visibility:private"],
+  )
+
   container_image(
-    name=name,
-    base=":{}".format(py3_image_name),
-    entrypoint=entrypoint,
-    cmd=["bash", "-c", "pip install /{}".format(py_wheel_path)],
-    env={
-      "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-    },
-    files=[
-      ":{}".format(py_wheel_name)
-    ],
-    visibility=visibility,
+      name = base_container_image_name,
+      # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
+      base = base,
+      env={
+        "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
+      },
+      tars = [":etc"],
+      # Beam base image places python3 under /usr/local/bin, but the host
+      # toolchain used by py3_image might use /usr/bin instead.
+      symlinks = {
+          "/usr/bin/python": "/usr/local/bin/python",
+          "/usr/bin/python3": "/usr/local/bin/python3",
+      },
+      stamp = True,
+      creation_time = "{BUILD_TIMESTAMP}",
+  )
+
+  # Use pip to install the dependencies inside the container.
+  container_run_and_commit(
+      name = deps_container_image_name,
+      image = "{}.tar".format(base_container_image_name),
+      commands = [
+          "pip install /etc/{}".format(py_wheel_name),
+      ],
   )
 
   py3_image(
-    name=py3_image_name,
+    name=name,
     srcs=srcs,
-    # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
-    base=base,
+    base=deps_container_image_name,
     main=main,
     deps=deps,
     layers=layers,
     visibility=visibility,
     **kwargs,
+    # Bazel injected init files can break python import.
+    # https://github.com/bazelbuild/rules_python/issues/55
+    legacy_create_init = False,
   )
 
   py_package(
