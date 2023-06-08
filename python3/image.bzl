@@ -81,11 +81,11 @@ def dataflow_flex_py3_image(
     for r in required_deps
     if r not in layers and r not in deps
   ]
-  
+
   # Compute the package path
   package_name = native.package_name()
   package_path = package_name + "/" if package_name else ""
-  
+
   container_run_and_commit(
     name=name,
     image=":{}.tar".format(container_image_name),
