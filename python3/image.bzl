@@ -2,7 +2,6 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@pip_deps//:requirements.bzl", "requirement")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_python//python:packaging.bzl", "py_package")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
@@ -87,17 +86,6 @@ def dataflow_flex_py3_image(
   package_name = native.package_name()
   package_path = package_name + "/" if package_name else ""
 
-  # Package wheel into a tar so we can load it into the container image.
-  pkg_tar(
-      name = "etc",
-      package_dir = "/etc",
-      srcs = [
-        ":{}".format(py_wheel_name),
-      ],
-      mode = "0644",
-      visibility = ["//visibility:private"],
-  )
-
   container_image(
       name = base_container_image_name,
       # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
@@ -105,7 +93,9 @@ def dataflow_flex_py3_image(
       env={
         "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
       },
-      tars = [":etc"],
+      files=[
+        ":{}".format(py_wheel_name)
+      ],
       # Beam base image places python3 under /usr/local/bin, but the host
       # toolchain used by py3_image might use /usr/bin instead.
       symlinks = {
@@ -119,7 +109,7 @@ def dataflow_flex_py3_image(
       name = deps_container_image_name,
       image = "{}.tar".format(base_container_image_name),
       commands = [
-          "pip install /etc/{}".format(py_wheel_name),
+          "pip install /{}".format(py_wheel_name),
       ],
   )
 
