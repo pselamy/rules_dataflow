@@ -104,7 +104,7 @@ def dataflow_flex_py3_image(
 
   container_image(
     name=name,
-    base=":{}".format(deps_image_name),
+    base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
@@ -115,7 +115,7 @@ def dataflow_flex_py3_image(
   # Intermediate Docker image with pip install
   container_run_and_commit(
     name=deps_image_name,
-    image=":{}.tar".format(py3_image_name),
+    image=":{}.tar".format(base_container_image_name),
     commands=[
       "pip install /{}".format(py_wheel_path),
     ],
@@ -124,7 +124,7 @@ def dataflow_flex_py3_image(
   py3_image(
     name=py3_image_name,
     srcs=srcs,
-    base=":{}".format(base_container_image_name),
+    base=":{}".format(deps_image_name),
     main=main,
     deps=deps,
     layers=layers,
