@@ -117,7 +117,6 @@ def dataflow_flex_py3_image(
   py3_image(
     name=py3_image_name,
     srcs=srcs,
-    # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
     base=":{}".format(base_container_image_name),
     main=main,
     deps=deps,
