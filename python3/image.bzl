@@ -50,6 +50,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
 
   # Generate names for intermediate targets
+  base_container_image_name = "{}.image".format(name)
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
   distribution = distribution or name
@@ -85,6 +86,25 @@ def dataflow_flex_py3_image(
   package_path = package_name + "/" if package_name else ""
 
   container_image(
+      name = base_container_image_name,
+      # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
+      base = base,
+      entrypoint=entrypoint,    
+      env={
+        "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
+      },
+      files=[
+        ":{}".format(py_wheel_name)
+      ],
+      # Beam base image places python3 under /usr/local/bin, but the host
+      # toolchain used by py3_image might use /usr/bin instead.
+      symlinks = {
+          "/usr/bin/python": "/usr/local/bin/python",
+          "/usr/bin/python3": "/usr/local/bin/python3",
+      },
+  )
+
+  container_image(
     name=name,
     base=":{}".format(py3_image_name),
     entrypoint=entrypoint,
@@ -102,7 +122,7 @@ def dataflow_flex_py3_image(
     name=py3_image_name,
     srcs=srcs,
     # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
-    base=base,
+    base=":{}".format(base_container_image_name),
     main=main,
     deps=deps,
     layers=layers,
