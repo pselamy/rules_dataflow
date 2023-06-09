@@ -50,6 +50,7 @@ def dataflow_flex_py3_image(
   srcs = srcs if main in srcs else srcs + [main]
 
   # Generate names for intermediate targets
+  deps_image_name = "{}.deps".format(name)
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
   distribution = distribution or name
@@ -86,16 +87,24 @@ def dataflow_flex_py3_image(
 
   container_image(
     name=name,
-    base=":{}".format(py3_image_name),
+    base=":{}".format(deps_image_name),
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
-    files=[
-      ":{}".format(py_wheel_name)
-    ],
     visibility=visibility,
+  )
+
+  # Intermediate Docker image with pip install
+  container_run_and_commit(
+    name=deps_image_name,
+    image=":{}.tar".format(py3_image_name),
+    commands=[
+      "pip install /{}".format(py_wheel_path),
+    ],
+    files=[
+      ":{}".format(py_wheel_name),
+    ],
   )
 
   py3_image(
