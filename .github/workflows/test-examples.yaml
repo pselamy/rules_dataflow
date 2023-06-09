@@ -46,7 +46,7 @@ jobs:
       run: |
         cd examples/python3/dataflow_flex_py3_pipeline_options
         bazel test //... \
-          --sandbox_debug \
+          --spawn_strategy=standalone \
           --test_output=errors
     - name: Verify metadata.json file
       run: |
