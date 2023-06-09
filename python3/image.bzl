@@ -18,18 +18,13 @@ def dataflow_flex_py3_image(
 
   Args:
     name (str): Name of the Docker image.
-    app_version (str): Application version.
     base (str): Base image for the Docker image.
     visibility (str): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list contaiing main.
     main (str, optional): Main source file. Defaults to name + .py.
-    distribution (str, optional): Distribution file. Defaults to the value of name.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
     layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
-    packages (List[str], optional): Python packages. Defaults to an empty list.
-    requires (List[str], optional): Required packages. Defaults to an empty list.
     entrypoint (str, optional): Docker container entrypoint. Defaults to "/opt/google/dataflow/python_template_launcher".
-    python_tag (str, optional): Python tag for the wheel. Defaults to "py3".
     **kwargs: Additional arguments.
 
   Returns:
