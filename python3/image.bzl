@@ -48,9 +48,6 @@ def dataflow_flex_py3_image(
   py_binary_name = "{}.binary".format(py3_image_name)
 
   beam_requirement = requirement("apache-beam")
-  # Convert 'deps' and 'layers' to depsets for easier manipulation
-  deps = depset(deps)
-  layers = depset(layers)
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
   if beam_requirement not in deps + layers:
     # If not present, add 'beam_requirement' to 'layers'
