@@ -51,7 +51,7 @@ def dataflow_flex_py3_image(
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
   if beam_requirement not in deps + layers:
     # If not present, add 'beam_requirement' to 'layers'
-    layers += beam_requirement
+    layers = layers + [beam_requirement]
 
   # Compute the package path
   package_name = native.package_name()
