@@ -81,9 +81,6 @@ def dataflow_flex_py3_image(
       # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
       base = base,
       entrypoint="/bin/bash",
-      files=[
-        ":{}".format(py_wheel_name)
-      ],
       # Beam base image places python3 under /usr/local/bin, but the host
       # toolchain used by py3_image might use /usr/bin instead.
       symlinks = {
