@@ -1,9 +1,6 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
-load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@pip_deps//:requirements.bzl", "requirement")
-load("@rules_python//python:packaging.bzl", "py_package")
-load("@rules_python//python:packaging.bzl", "py_wheel")
 
 def dataflow_flex_py3_image(
   name,
