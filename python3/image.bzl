@@ -118,7 +118,8 @@ def dataflow_flex_py3_image(
     name=deps_image_name,
     image=":{}.tar".format(base_container_image_name),
     commands=[
-      "pip install /{}".format(py_wheel_path),
+#       "pip install /{}".format(py_wheel_path),
+        "touch foo",
     ],
   )
 
