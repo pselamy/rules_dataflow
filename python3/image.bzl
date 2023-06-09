@@ -103,9 +103,6 @@ def dataflow_flex_py3_image(
     commands=[
       "pip install /{}".format(py_wheel_path),
     ],
-    files=[
-      ":{}".format(py_wheel_name),
-    ],
   )
 
   py3_image(
