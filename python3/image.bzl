@@ -7,18 +7,13 @@ load("@rules_python//python:packaging.bzl", "py_wheel")
 
 def dataflow_flex_py3_image(
   name,
-  app_version,
   base,
   visibility=["//visibility:private"],
   srcs=[],
   main="",
-  distribution="",
   deps=[],
   layers=[],
-  packages=[],
-  requires=[],
   entrypoint="/opt/google/dataflow/python_template_launcher",
-  python_tag="py3",
   **kwargs,
 ):
   """
@@ -55,22 +50,14 @@ def dataflow_flex_py3_image(
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
 
-  # Create a list of required dependencies based on 'requires'
-  required_deps = [
-    requirement(r.split("==")[0].split("[")[0])
-    for r in requires
-  ]
   beam_requirement = requirement("apache-beam")
-  required_deps = required_deps if beam_requirement in required_deps else [
-    beam_requirement
-  ] + required_deps
-
-  # Add required_deps to layers if they are not already in layers or deps
-  layers = layers + [
-    r
-    for r in required_deps
-    if r not in layers and r not in deps
-  ]
+  # Convert 'deps' and 'layers' to depsets for easier manipulation
+  deps = depset(deps)
+  layers = depset(layers)
+  # Check if 'beam_requirement' is already in 'deps' or 'layers'
+  if beam_requirement not in deps + layers:
+    # If not present, add 'beam_requirement' to 'layers'
+    layers += beam_requirement
 
   # Compute the package path
   package_name = native.package_name()
