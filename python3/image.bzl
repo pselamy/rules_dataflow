@@ -5,8 +5,10 @@ load("@rules_python//python:packaging.bzl", "py_package")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
 def _read_requirements_file(path):
-    with open(path, "r") as f:
-        return [line.strip() for line in f.readlines() if line.strip()]
+    file = open(path, "r")
+    lines = [line.strip() for line in file.readlines() if line.strip()]
+    file.close()
+    return lines
 
 def dataflow_flex_py3_image(
   name,
