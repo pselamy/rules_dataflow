@@ -5,21 +5,6 @@ load("@rules_python//python:packaging.bzl", "py_package")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
 
-def _read_requirements_file(path):
-    """
-    Reads a requirements.txt file and returns a list of stripped lines.
-
-    Args:
-        path (str): The path to the requirements.txt file.
-
-    Returns:
-        List[str]: A list of stripped lines from the requirements.txt file.
-    """
-    contents = ctx.actions.read(path)
-    lines = contents.splitlines()
-    return [line.strip() for line in lines if line.strip()]
-
-
 def dataflow_flex_py3_image(
   name,
   app_version,
@@ -76,6 +61,9 @@ def dataflow_flex_py3_image(
     version=app_version,
   )
 
+  generated_requirements_name = "{}.requirements".format(name)
+  generated_requirements_path = "generated_{}_requirements.txt".format(name)
+
   beam_requirement = requirement("apache-beam")
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
   if beam_requirement not in deps + layers:
@@ -105,10 +93,11 @@ def dataflow_flex_py3_image(
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)      
+      "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE": "/{}".format(generated_requirements_path)      
     },
     files=[
-      ":{}".format(py_wheel_name)
+      ":{}".format(generated_requirements_name),
+      ":{}".format(py_wheel_name),
     ],
     visibility=visibility,
   )
@@ -139,5 +128,14 @@ def dataflow_flex_py3_image(
     deps = [
       ":{}".format(py_package_name),
     ],
-    requires=_read_requirements_file(requirements_file),
+  )
+
+  genrule(
+    name = generate_requirements_name,
+    srcs = [requirements_file],
+    outs = [generated_requirements_file_name],
+    cmd = """
+        cat $(SRCS) > $(OUTS)
+        echo {} >> $(OUTS)
+    """.format(py_wheel_path),
   )
