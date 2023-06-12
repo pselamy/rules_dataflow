@@ -138,7 +138,7 @@ def dataflow_flex_py3_image(
         cat $(SRCS) > $(OUTS) &&
         echo $${py_wheel_path} >> $(OUTS)
     """,
-    attrs = {
+    args = {
         "py_wheel_path": "/{}".format(py_wheel_path),
     },
   )
