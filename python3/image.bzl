@@ -54,10 +54,9 @@ def dataflow_flex_py3_image(
   py_wheel_name = "{}.wheel".format(name)
 
   # Generate the filename for the Python wheel
-  py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl".format(
+  py_wheel_path = "{name}-{version}-py3-none-any.whl".format(
     name=name,
     version=app_version,
-    python_tag=python_tag,
   )
 
   beam_requirement = requirement("apache-beam")
@@ -118,7 +117,6 @@ def dataflow_flex_py3_image(
   
   py_wheel(
     name = py_wheel_name,
-    # {name}-{version}-{python_tag}-none-any.whl
     distribution = distribution,
     version = app_version,
     deps = [
