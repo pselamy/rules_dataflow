@@ -4,11 +4,22 @@ load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:packaging.bzl", "py_package")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
+
 def _read_requirements_file(path):
-    file = open(path, "r")
-    lines = [line.strip() for line in file.readlines() if line.strip()]
-    file.close()
-    return lines
+    """
+    Reads a requirements.txt file and returns a list of stripped lines.
+
+    Args:
+        path (str): The path to the requirements.txt file.
+
+    Returns:
+        List[str]: A list of stripped lines from the requirements.txt file.
+    """
+    contents = ctx.actions.read(path)
+    lines = contents.splitlines()
+    stripped_lines = [line.strip() for line in lines if line.strip()]
+    return stripped_lines
+
 
 def dataflow_flex_py3_image(
   name,
