@@ -4,12 +4,15 @@ load("@pip_deps//:requirements.bzl", "requirement")
 
 def dataflow_flex_py3_image(
   name,
+  app_version,
   base,
   visibility=["//visibility:private"],
   srcs=[],
   main="",
+  distribution="",
   deps=[],
   layers=[],
+  packages=[],
   entrypoint="/opt/google/dataflow/python_template_launcher",
   **kwargs,
 ):
@@ -18,12 +21,15 @@ def dataflow_flex_py3_image(
 
   Args:
     name (str): Name of the Docker image.
+    app_version (str): Application version.
     base (str): Base image for the Docker image.
     visibility (str): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list contaiing main.
     main (str, optional): Main source file. Defaults to name + .py.
+    distribution (str, optional): Distribution file. Defaults to the value of name.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
     layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
+    packages (List[str], optional): Python packages. Defaults to an empty list.
     entrypoint (str, optional): Docker container entrypoint. Defaults to "/opt/google/dataflow/python_template_launcher".
     **kwargs: Additional arguments.
 
@@ -41,6 +47,9 @@ def dataflow_flex_py3_image(
   base_container_image_name = "{}.image".format(name)
   py3_image_name = "{}.base".format(name)
   py_binary_name = "{}.binary".format(py3_image_name)
+  distribution = distribution or name
+  py_package_name = "{}.pkg".format(name)
+  py_wheel_name = "{}.wheel".format(name)
 
   beam_requirement = requirement("apache-beam")
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
@@ -71,7 +80,11 @@ def dataflow_flex_py3_image(
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
+      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)      
     },
+    files=[
+      ":{}".format(py_wheel_name)
+    ],
     visibility=visibility,
   )
 
@@ -84,4 +97,22 @@ def dataflow_flex_py3_image(
     layers=layers,
     visibility=visibility,
     **kwargs,
+  )
+
+  py_package(
+    name = py_package_name,
+    packages = packages,
+    deps = [
+      ":{}".format(py_binary_name),
+    ],
+  )
+  
+  py_wheel(
+    name = py_wheel_name,
+    # {name}-{version}-{python_tag}-none-any.whl
+    distribution = distribution,
+    version = app_version,
+    deps = [
+      ":{}".format(py_package_name),
+    ],
   )
