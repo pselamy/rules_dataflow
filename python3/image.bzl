@@ -17,8 +17,7 @@ def _read_requirements_file(path):
     """
     contents = ctx.actions.read(path)
     lines = contents.splitlines()
-    stripped_lines = [line.strip() for line in lines if line.strip()]
-    return stripped_lines
+    return [line.strip() for line in lines if line.strip()]
 
 
 def dataflow_flex_py3_image(
