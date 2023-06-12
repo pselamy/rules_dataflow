@@ -27,9 +27,10 @@ def dataflow_flex_py3_image(
     name (str): Name of the Docker image.
     app_version (str): Application version.
     base (str): Base image for the Docker image.
-    visibility (str): The Bazel visibility. Defaults to ["//visibility:private"].
+    requirements_file (str): Path to the requirements.txt file containing project dependencies.
+    visibility (List[str], optional): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list containing main.
-    main (str, optional): Main source file. Defaults to name + .py.
+    main (str, optional): Main source file. Defaults to name + ".py".
     distribution (str, optional): Distribution file. Defaults to the value of name.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
     layers (List[str], optional): Additional layers for the Docker image. Defaults to an empty list.
@@ -75,13 +76,13 @@ def dataflow_flex_py3_image(
   package_path = package_name + "/" if package_name else ""
 
   container_image(
-      name = base_container_image_name,
+      name=base_container_image_name,
       # See https://cloud.google.com/dataflow/docs/reference/flex-templates-base-images for list of images.
-      base = base,
+      base=base,
       entrypoint="/bin/bash",
       # Beam base image places python3 under /usr/local/bin, but the host
       # toolchain used by py3_image might use /usr/bin instead.
-      symlinks = {
+      symlinks={
           "/usr/bin/python": "/usr/local/bin/python",
           "/usr/bin/python3": "/usr/local/bin/python3",
       },
@@ -114,29 +115,28 @@ def dataflow_flex_py3_image(
   )
 
   py_package(
-    name = py_package_name,
-    packages = packages,
-    deps = [
+    name=py_package_name,
+    packages=packages,
+    deps=[
       ":{}".format(py_binary_name),
     ],
   )
   
   py_wheel(
-    name = py_wheel_name,
-    distribution = distribution,
-    version = app_version,
-    deps = [
+    name=py_wheel_name,
+    distribution=distribution,
+    version=app_version,
+    deps=[
       ":{}".format(py_package_name),
     ],
   )
 
   native.genrule(
-    name = generated_requirements_name,
-    srcs = [requirements_file],
-    outs = [generated_requirements_path],
-    cmd = """
+    name=generated_requirements_name,
+    srcs=[requirements_file],
+    outs=[generated_requirements_path],
+    cmd="""
         cat $(SRCS) > $(OUTS)
         echo "/{}" >> $(OUTS)
     """.format(py_wheel_path),
   )
-
