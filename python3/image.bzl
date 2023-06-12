@@ -53,6 +53,13 @@ def dataflow_flex_py3_image(
   py_package_name = "{}.pkg".format(name)
   py_wheel_name = "{}.wheel".format(name)
 
+  # Generate the filename for the Python wheel
+  py_wheel_path = "{name}-{version}-{python_tag}-none-any.whl".format(
+    name=name,
+    version=app_version,
+    python_tag=python_tag,
+  )
+
   beam_requirement = requirement("apache-beam")
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
   if beam_requirement not in deps + layers:
