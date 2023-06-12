@@ -4,10 +4,15 @@ load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:packaging.bzl", "py_package")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
+def _read_requirements_file(path):
+    with open(path, "r") as f:
+        return [line.strip() for line in f.readlines() if line.strip()]
+
 def dataflow_flex_py3_image(
   name,
   app_version,
   base,
+  requirements_file,
   visibility=["//visibility:private"],
   srcs=[],
   main="",
@@ -122,4 +127,5 @@ def dataflow_flex_py3_image(
     deps = [
       ":{}".format(py_package_name),
     ],
+    requires=_read_requirements_file(requirements_file),
   )
