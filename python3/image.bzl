@@ -130,7 +130,7 @@ def dataflow_flex_py3_image(
     ],
   )
 
-  genrule(
+  native.genrule(
     name = generated_requirements_name,
     srcs = [requirements_file],
     outs = [generated_requirements_path],
