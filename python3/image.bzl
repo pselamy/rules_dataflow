@@ -134,7 +134,9 @@ def dataflow_flex_py3_image(
     name = generated_requirements_name,
     srcs = [requirements_file],
     outs = [generated_requirements_path],
-    cmd = "cat $(SRCS) > $(OUTS) &&" +
-          'echo "/{py_wheel_path}" >> $(OUTS)'.format(py_wheel_path=py_wheel_path),
+    cmd = """
+        cat $(SRCS) > $(OUTS)
+        echo "{}" >> $(OUTS)
+    """.format(py_wheel_path),
   )
 
