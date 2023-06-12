@@ -133,7 +133,7 @@ def dataflow_flex_py3_image(
   genrule(
     name = generated_requirements_name,
     srcs = [requirements_file],
-    outs = [generated_requirements_file_name],
+    outs = [generated_requirements_path],
     cmd = """
         cat $(SRCS) > $(OUTS) &&
         echo $${py_wheel_path} >> $(OUTS)
