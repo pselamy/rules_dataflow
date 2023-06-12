@@ -136,7 +136,7 @@ def dataflow_flex_py3_image(
     outs = [generated_requirements_path],
     cmd = """
         cat $(SRCS) > $(OUTS)
-        echo "{}" >> $(OUTS)
+        echo "/{}" >> $(OUTS)
     """.format(py_wheel_path),
   )
 
