@@ -43,7 +43,7 @@ def dataflow_flex_py3_image(
     app_version (str): Application version.
     base (str): Base image for the Docker image.
     visibility (str): The Bazel visibility. Defaults to ["//visibility:private"].
-    srcs (List[str], optional): Source files. Defaults to a list contaiing main.
+    srcs (List[str], optional): Source files. Defaults to a list containing main.
     main (str, optional): Main source file. Defaults to name + .py.
     distribution (str, optional): Distribution file. Defaults to the value of name.
     deps (List[str], optional): Dependency files. Defaults to an empty list.
