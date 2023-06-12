@@ -9,7 +9,7 @@ def dataflow_flex_py3_image(
   name,
   app_version,
   base,
-  requirements_file,
+  requirements_file="//:requirements.txt",
   visibility=["//visibility:private"],
   srcs=[],
   main="",
@@ -27,7 +27,7 @@ def dataflow_flex_py3_image(
     name (str): Name of the Docker image.
     app_version (str): Application version.
     base (str): Base image for the Docker image.
-    requirements_file (str): Path to the requirements.txt file containing project dependencies.
+    requirements_file (str): Path to the requirements.txt file containing project dependencies. Defaults to "//:requirements.txt".
     visibility (List[str], optional): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list containing main.
     main (str, optional): Main source file. Defaults to name + ".py".
