@@ -12,7 +12,11 @@ compile_pip_requirements(
 # Minimal Example
 dataflow_flex_py3_image(
     name = "profile_pipeline",
+    app_version = "0.0.1",
     base = "@dataflow_python310_template_launcher_base//image",
+    packages = [
+        "common",
+    ],
     layers = [
       requirement("Faker"),
       requirement("apache-beam"),        
