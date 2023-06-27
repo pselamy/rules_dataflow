@@ -9,7 +9,7 @@ def dataflow_flex_py3_image(
   name,
   app_version,
   base,
-  requirements_file="//:requirements.txt",
+  requires=[],
   visibility=["//visibility:private"],
   srcs=[],
   main="",
@@ -27,7 +27,7 @@ def dataflow_flex_py3_image(
     name (str): Name of the Docker image.
     app_version (str): Application version.
     base (str): Base image for the Docker image.
-    requirements_file (str): Path to the requirements.txt file containing project dependencies. Defaults to "//:requirements.txt".
+    requires (List[str], optional): The Python requirements to be installed on worker nodes.
     visibility (List[str], optional): The Bazel visibility. Defaults to ["//visibility:private"].
     srcs (List[str], optional): Source files. Defaults to a list containing main.
     main (str, optional): Main source file. Defaults to name + ".py".
@@ -62,9 +62,6 @@ def dataflow_flex_py3_image(
     version=app_version,
   )
 
-  generated_requirements_name = "{}.requirements".format(name)
-  generated_requirements_path = "generated_{}_requirements.txt".format(name)
-
   beam_requirement = requirement("apache-beam")
   # Check if 'beam_requirement' is already in 'deps' or 'layers'
   if beam_requirement not in deps + layers:
@@ -94,10 +91,9 @@ def dataflow_flex_py3_image(
     entrypoint=entrypoint,
     env={
       "FLEX_TEMPLATE_PYTHON_PY_FILE": "{}{}".format(package_path, py_binary_name),
-      "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE": "/{}".format(generated_requirements_path)      
+      "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
-      ":{}".format(generated_requirements_name),
       ":{}".format(py_wheel_name),
     ],
     visibility=visibility,
@@ -126,17 +122,8 @@ def dataflow_flex_py3_image(
     name=py_wheel_name,
     distribution=distribution,
     version=app_version,
+    requires=requires,
     deps=[
       ":{}".format(py_package_name),
     ],
-  )
-
-  native.genrule(
-    name=generated_requirements_name,
-    srcs=[requirements_file],
-    outs=[generated_requirements_path],
-    cmd="""
-        cat $(SRCS) > $(OUTS)
-        echo "/{}" >> $(OUTS)
-    """.format(py_wheel_path),
   )

@@ -17,7 +17,10 @@ dataflow_flex_py3_image(
     packages = [
         "common",
     ],
-    requirements_file = "requirements.txt",
+    requires = [
+        "Faker==18.9.0",
+        "apache-beam[gcp]==2.47.0",
+    ],
     layers = [
       requirement("Faker"),
       requirement("apache-beam"),        
