@@ -94,7 +94,6 @@ def dataflow_flex_py3_image(
       "FLEX_TEMPLATE_PYTHON_EXTRA_PACKAGES": "/{}".format(py_wheel_path)
     },
     files=[
-      ":{}".format(py_wheel_path),
       ":{}".format(py_wheel_name),
     ],
     visibility=visibility,
