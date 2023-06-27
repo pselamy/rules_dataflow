@@ -18,8 +18,8 @@ dataflow_flex_py3_image(
         "common",
     ],
     requires = [
-        "Faker",
-        "apache-beam",
+        "Faker==18.9.0",
+        "apache-beam[gcp]==2.47.0",
     ],
     layers = [
       requirement("Faker"),
